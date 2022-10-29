@@ -11,15 +11,9 @@ using Microsoft.Extensions.Http;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
 {
-    public sealed class TraceOptionsBuilder
+    public sealed class TraceOptionsBuilder : TraceOptions
     {
         public IServiceCollection Services { get; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <remarks><b>Default value:</b> x-trace-id</remarks>
-        public string Header { get; set; } = "x-trace-id";
 
         internal TraceOptionsBuilder(IServiceCollection services)
         {
@@ -34,10 +28,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
             Services.TryAddSingleton<ITraceContextAccessor>(p => p.GetRequiredService<TraceContextAccessor>());
 
             Services.TryAddSingleton<ITraceIdProvider, GuidTraceIdProvider>();
-            Services.TryAddSingleton<ITraceOptions>(new TraceOptions
-            {
-                Header = Header
-            });
+            Services.TryAddSingleton<ITraceOptions>(this);
 
             TryAddFilter(Services);
             TryAddHandler(Services);
@@ -45,15 +36,15 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
 
         private static void TryAddFilter(IServiceCollection services)
         {
-            if (services.Any(s => s.ServiceType == typeof(TraceIdSetFilter)))
+            if (services.Any(s => s.ServiceType == typeof(TraceIdFilter)))
             {
                 return;
             }
 
-            services.AddScoped<TraceIdSetFilter>();
+            services.AddScoped<TraceIdFilter>();
             services.Configure<MvcOptions>(o =>
             {
-                o.Filters.AddService<TraceIdSetFilter>();
+                o.Filters.AddService<TraceIdFilter>();
             });
         }
 

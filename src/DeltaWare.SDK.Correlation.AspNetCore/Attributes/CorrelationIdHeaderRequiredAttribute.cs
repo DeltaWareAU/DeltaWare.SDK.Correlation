@@ -1,9 +1,6 @@
-﻿using DeltaWare.SDK.Correlation.AspNetCore.Helpers;
-using DeltaWare.SDK.Correlation.Context.Accessors;
-using DeltaWare.SDK.Correlation.Options;
+﻿using DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Attributes
 {
@@ -15,12 +12,9 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Attributes
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            ILogger? logger = context.HttpContext.RequestServices.GetService<ILogger<CorrelationIdHeaderRequiredAttribute>>();
-
-            ICorrelationContextAccessor contextAccessor = context.HttpContext.RequestServices.GetRequiredService<ICorrelationContextAccessor>();
-            ICorrelationOptions options = context.HttpContext.RequestServices.GetRequiredService<ICorrelationOptions>();
-
-            CorrelationFilterHelper.IdRequired(context, contextAccessor, options, logger);
+            context.HttpContext.RequestServices
+                .GetRequiredService<AspNetCorrelationContextScope>()
+                .ValidateContext(context, true);
         }
     }
 }

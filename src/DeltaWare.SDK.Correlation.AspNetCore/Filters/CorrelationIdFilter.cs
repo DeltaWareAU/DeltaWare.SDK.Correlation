@@ -1,23 +1,27 @@
 ﻿using DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes;
-using DeltaWare.SDK.Correlation.Context.Accessors;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Filters
 {
-    internal sealed class CorrelationIdSetFilter : IActionFilter
+    internal sealed class CorrelationIdFilter : IActionFilter
     {
         private readonly AspNetCorrelationContextScope _contextScope;
-        private readonly CorrelationContextAccessor _contextAccessor;
 
-        public CorrelationIdSetFilter(AspNetCorrelationContextScope contextScope, CorrelationContextAccessor contextAccessor)
+        public CorrelationIdFilter(AspNetCorrelationContextScope contextScope)
         {
             _contextScope = contextScope;
-            _contextAccessor = contextAccessor;
         }
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            _contextAccessor.InternalScope = _contextScope;
+            _contextScope.ValidateContext(context);
+
+            context.HttpContext.Response.OnStarting(() =>
+            {
+                _contextScope.TrySetId();
+
+                return Task.CompletedTask;
+            });
         }
 
         public void OnActionExecuted(ActionExecutedContext context)

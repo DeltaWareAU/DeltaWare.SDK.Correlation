@@ -1,6 +1,6 @@
-﻿using System.Net.Http.Headers;
-using DeltaWare.SDK.Correlation.Context.Accessors;
+﻿using DeltaWare.SDK.Correlation.Context.Accessors;
 using DeltaWare.SDK.Correlation.Options;
+using System.Net.Http.Headers;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Handler
 {

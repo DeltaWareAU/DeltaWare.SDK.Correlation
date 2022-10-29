@@ -1,7 +1,14 @@
 ﻿namespace DeltaWare.SDK.Correlation.Options
 {
-    public sealed class TraceOptions : ITraceOptions
+    public class TraceOptions : ITraceOptions
     {
-        public string Header { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks><b>Default value:</b> x-tracing-id</remarks>
+        public string Header { get; set; } = "x-tracing-id";
+
+        public bool AttachToResponse { get; set; } = false;
+        public bool IsRequired { get; set; } = false;
     }
 }

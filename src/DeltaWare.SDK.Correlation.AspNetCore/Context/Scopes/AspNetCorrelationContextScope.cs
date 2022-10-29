@@ -4,6 +4,8 @@ using DeltaWare.SDK.Correlation.Context.Scope;
 using DeltaWare.SDK.Correlation.Options;
 using DeltaWare.SDK.Correlation.Providers;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 
@@ -17,24 +19,37 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 
         public CorrelationContext Context { get; }
 
-        public AspNetCorrelationContextScope(ICorrelationOptions options, ICorrelationIdProvider idProvider, IHttpContextAccessor httpContextAccessor, ILogger<ICorrelationContextAccessor>? logger = null)
+        public bool ReceivedId { get; }
+
+        public AspNetCorrelationContextScope(CorrelationContextAccessor contextAccessor, ICorrelationOptions options, ICorrelationIdProvider idProvider, IHttpContextAccessor httpContextAccessor, ILogger<ICorrelationContextAccessor>? logger = null)
         {
+            contextAccessor.InternalScope = this;
+
             _options = options;
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
 
             if (!TryGetId(out string? correlationId))
             {
+                ReceivedId = false;
+
                 correlationId = idProvider.GenerateId();
 
                 _logger?.LogDebug("No CorrelationId was attached to the RequestHeaders. A new CorrelationId has been generated. {CorrelationId}", correlationId);
             }
             else
             {
+                ReceivedId = true;
+
                 _logger?.LogDebug("A CorrelationId {CorrelationId} was attached to the RequestHeaders.", correlationId);
             }
 
             Context = new CorrelationContext(correlationId!);
+
+            if (options.AttachToResponse)
+            {
+                TrySetId();
+            }
         }
 
         public bool TryGetId(out string? idValue)
@@ -60,13 +75,47 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
             return true;
         }
 
-        public bool TrySetId(string value)
+        public bool TrySetId(bool force = false)
         {
-            _httpContextAccessor.HttpContext.Response.Headers.Add(_options.Header, value);
+            if (!force && !_options.AttachToResponse)
+            {
+                return false;
+            }
+
+            return TrySetId(Context.CorrelationId);
+        }
+
+        public bool TrySetId(string correlationId)
+        {
+            if (!_httpContextAccessor.HttpContext.Response.Headers.ContainsKey(_options.Header))
+            {
+                return false;
+            }
+
+            _httpContextAccessor.HttpContext.Response.Headers.Add(_options.Header, correlationId);
+
+            _logger?.LogDebug("Correlation ID {CorrelationId} has been attached to the Response Headers", correlationId);
 
             return true;
         }
 
-        public bool TrySetId() => TrySetId(Context.CorrelationId);
+        public void ValidateContext(ActionExecutingContext context, bool force = false)
+        {
+            if (!force && !_options.IsRequired)
+            {
+                return;
+            }
+
+            if (ReceivedId)
+            {
+                _logger?.LogDebug("Header Validation Passed. A CorrelationId {CorrelationId} was received in the HttpRequest Headers", Context.CorrelationId);
+
+                return;
+            }
+
+            _logger?.LogWarning("Header Validation Failed. A CorrelationId was not received in the HttpRequest Headers, responding with 400 (Bad Request).");
+
+            context.Result = new BadRequestObjectResult($"The Request Headers must contain the \"{_options.Header}\" Header.");
+        }
     }
 }

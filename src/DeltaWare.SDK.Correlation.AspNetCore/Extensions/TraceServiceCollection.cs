@@ -1,5 +1,4 @@
 ﻿using DeltaWare.SDK.Correlation.AspNetCore.Options.Builder;
-using Prospa.SDK.Correlation.AspNetCore.Options.Builder;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection

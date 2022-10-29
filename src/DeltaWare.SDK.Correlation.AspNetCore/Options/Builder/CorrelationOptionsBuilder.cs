@@ -11,15 +11,9 @@ using Microsoft.Extensions.Http;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
 {
-    public sealed class CorrelationOptionsBuilder
+    public sealed class CorrelationOptionsBuilder : CorrelationOptions
     {
         public IServiceCollection Services { get; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <remarks><b>Default value:</b> x-correlation-id</remarks>
-        public string Header { get; set; } = "x-correlation-id";
 
         internal CorrelationOptionsBuilder(IServiceCollection services)
         {
@@ -34,10 +28,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
             Services.TryAddSingleton<ICorrelationContextAccessor>(p => p.GetRequiredService<CorrelationContextAccessor>());
 
             Services.TryAddSingleton<ICorrelationIdProvider, GuidCorrelationIdProvider>();
-            Services.TryAddSingleton<ICorrelationOptions>(new CorrelationOptions
-            {
-                Header = Header
-            });
+            Services.TryAddSingleton<ICorrelationOptions>(this);
 
             TryAddHandler(Services);
             TryAddHandler(Services);
@@ -45,15 +36,15 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
 
         private static void TryAddFilter(IServiceCollection services)
         {
-            if (services.Any(s => s.ServiceType == typeof(CorrelationIdSetFilter)))
+            if (services.Any(s => s.ServiceType == typeof(CorrelationIdFilter)))
             {
                 return;
             }
 
-            services.AddScoped<CorrelationIdSetFilter>();
+            services.AddScoped<CorrelationIdFilter>();
             services.Configure<MvcOptions>(o =>
             {
-                o.Filters.AddService<CorrelationIdSetFilter>();
+                o.Filters.AddService<CorrelationIdFilter>();
             });
         }
 

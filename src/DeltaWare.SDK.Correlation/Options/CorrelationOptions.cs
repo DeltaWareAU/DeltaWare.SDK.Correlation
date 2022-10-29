@@ -1,7 +1,14 @@
 ﻿namespace DeltaWare.SDK.Correlation.Options
 {
-    public sealed class CorrelationOptions : ICorrelationOptions
+    public class CorrelationOptions : ICorrelationOptions
     {
-        public string Header { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks><b>Default value:</b> x-correlation-id</remarks>
+        public string Header { get; set; } = "x-correlation-id";
+
+        public bool AttachToResponse { get; set; } = false;
+        public bool IsRequired { get; set; } = false;
     }
 }
