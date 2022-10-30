@@ -4,10 +4,10 @@ using DeltaWare.SDK.Correlation.Context.Scope;
 using DeltaWare.SDK.Correlation.Options;
 using DeltaWare.SDK.Correlation.Providers;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 {
@@ -75,47 +75,54 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
             return true;
         }
 
-        public bool TrySetId(bool force = false)
+        public void TrySetId(bool force = false)
         {
             if (!force && !_options.AttachToResponse)
             {
-                return false;
+                return;
             }
 
-            return TrySetId(Context.CorrelationId);
+            TrySetId(Context.CorrelationId);
         }
 
-        public bool TrySetId(string correlationId)
+        public void TrySetId(string correlationId)
         {
-            if (!_httpContextAccessor.HttpContext.Response.Headers.ContainsKey(_options.Header))
+            _httpContextAccessor.HttpContext.Response.OnStarting(() =>
             {
-                return false;
-            }
+                if (!_httpContextAccessor.HttpContext.Response.Headers.ContainsKey(_options.Header))
+                {
+                    return Task.CompletedTask;
+                }
 
-            _httpContextAccessor.HttpContext.Response.Headers.Add(_options.Header, correlationId);
+                _httpContextAccessor.HttpContext.Response.Headers.Add(_options.Header, correlationId);
 
-            _logger?.LogDebug("Correlation ID {CorrelationId} has been attached to the Response Headers", correlationId);
+                _logger?.LogDebug("Correlation ID {CorrelationId} has been attached to the Response Headers", correlationId);
 
-            return true;
+                return Task.CompletedTask;
+            });
         }
 
-        public void ValidateContext(ActionExecutingContext context, bool force = false)
+        public async Task<bool> ValidateContextAsync(HttpContext context, bool force = false)
         {
             if (!force && !_options.IsRequired)
             {
-                return;
+                return true;
             }
 
             if (ReceivedId)
             {
                 _logger?.LogDebug("Header Validation Passed. A CorrelationId {CorrelationId} was received in the HttpRequest Headers", Context.CorrelationId);
 
-                return;
+                return true;
             }
 
             _logger?.LogWarning("Header Validation Failed. A CorrelationId was not received in the HttpRequest Headers, responding with 400 (Bad Request).");
 
-            context.Result = new BadRequestObjectResult($"The Request Headers must contain the \"{_options.Header}\" Header.");
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+
+            await context.Response.WriteAsync($"The Request Headers must contain the \"{_options.Header}\" Header.");
+
+            return false;
         }
     }
 }

@@ -9,5 +9,8 @@
 
         bool AttachToResponse { get; }
         bool IsRequired { get; set; }
+        bool AttachToLoggingScope { get; }
+
+        string LoggingScopeKey { get; }
     }
 }

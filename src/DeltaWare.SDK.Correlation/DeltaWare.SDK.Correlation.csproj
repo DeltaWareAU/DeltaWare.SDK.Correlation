@@ -1,9 +1,33 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
+      <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
+      <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+      <Version>6.0.0.1-prerelease</Version>
     <Nullable>enable</Nullable>
+      <Author>Bradley Clarke</Author>
+      <Company>DeltaWare</Company>
+      <Product>DeltaWare.SDK.Correlation</Product>
+      <!--<Description></Description>-->
+      <PackageProjectUrl>https://github.com/DeltaWareAU/DeltaWare.SDK.Correlation</PackageProjectUrl>
+      <!--<PackageReadmeFile>README.md</PackageReadmeFile>-->
+      <RepositoryUrl>https://github.com/DeltaWareAU/DeltaWare.SDK.Correlation</RepositoryUrl>
+      <RepositoryType>git</RepositoryType>
+      <!--<PackageTags></PackageTags>-->
+      <NeutralLanguage>en</NeutralLanguage>
+      <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+      <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+      <IncludeSymbols>true</IncludeSymbols>
+      <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+      <PackageOutputPath>..\..\nuget.packages</PackageOutputPath>
   </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\..\nuget_logo.png" pack="true" PackagePath="." />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\..\LICENSE.md" pack="true" PackagePath="." />
+    </ItemGroup>
 
 </Project>

@@ -3,10 +3,10 @@ using DeltaWare.SDK.Correlation.Context.Accessors;
 using DeltaWare.SDK.Correlation.Context.Scope;
 using DeltaWare.SDK.Correlation.Options;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 {
@@ -74,47 +74,59 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
             return true;
         }
 
-        public bool TrySetId(bool force = false)
+        public void TrySetId(bool force = false)
         {
             if (!force && !_options.AttachToResponse)
             {
-                return false;
+                return;
             }
 
-            return TrySetId(Context.TraceId ?? string.Empty);
-        }
-
-        public bool TrySetId(string traceId)
-        {
-            if (!_httpContextAccessor.HttpContext.Response.Headers.ContainsKey(_options.Header) || string.IsNullOrEmpty(traceId))
+            if (string.IsNullOrEmpty(Context.TraceId))
             {
-                return false;
+                return;
             }
 
-            _httpContextAccessor.HttpContext.Response.Headers.Add(_options.Header, traceId);
-
-            _logger?.LogDebug("Trace ID {TraceId} has been attached to the Response Headers", traceId);
-
-            return true;
+            TrySetId(Context.TraceId);
         }
 
-        public void ValidateContext(ActionExecutingContext context, bool force = false)
+        public void TrySetId(string traceId)
+        {
+            _httpContextAccessor.HttpContext.Response.OnStarting(() =>
+            {
+                if (!_httpContextAccessor.HttpContext.Response.Headers.ContainsKey(_options.Header))
+                {
+                    return Task.CompletedTask;
+                }
+
+                _httpContextAccessor.HttpContext.Response.Headers.Add(_options.Header, traceId);
+
+                _logger?.LogDebug("Trace ID {TraceId} has been attached to the Response Headers", traceId);
+
+                return Task.CompletedTask;
+            });
+        }
+
+        public async Task<bool> ValidateContextAsync(HttpContext context, bool force = false)
         {
             if (!force && !_options.IsRequired)
             {
-                return;
+                return true;
             }
 
             if (ReceivedId)
             {
                 _logger?.LogDebug("Header Validation Passed. A TraceId {TraceId} was received in the HttpRequest Headers", Context.TraceId);
 
-                return;
+                return true;
             }
 
             _logger?.LogWarning("Header Validation Failed. A TraceId was not received in the HttpRequest Headers, responding with 400 (Bad Request).");
 
-            context.Result = new BadRequestObjectResult($"The Request Headers must contain the \"{_options.Header}\" Header.");
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+
+            await context.Response.WriteAsync($"The Request Headers must contain the \"{_options.Header}\" Header.");
+
+            return false;
         }
     }
 }

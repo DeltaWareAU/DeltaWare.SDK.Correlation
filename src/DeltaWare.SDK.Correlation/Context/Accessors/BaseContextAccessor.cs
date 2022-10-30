@@ -1,10 +1,11 @@
 ﻿using DeltaWare.SDK.Correlation.Context.Scope;
+using System.Threading;
 
 namespace DeltaWare.SDK.Correlation.Context.Accessors
 {
     public class BaseContextAccessor<TContext> : IContextAccessor<TContext>
     {
-        private static readonly AsyncLocal<IContextScope<TContext>> _internalScope = new();
+        private static readonly AsyncLocal<IContextScope<TContext>> _internalScope = new AsyncLocal<IContextScope<TContext>>();
 
         public IContextScope<TContext> InternalScope
         {

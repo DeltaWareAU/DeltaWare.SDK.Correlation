@@ -1,4 +1,6 @@
-﻿namespace DeltaWare.SDK.Correlation.Providers
+﻿using System;
+
+namespace DeltaWare.SDK.Correlation.Providers
 {
     /// <summary>
     /// Provides Correlation IDs in GUID format.

@@ -10,5 +10,7 @@
 
         public bool AttachToResponse { get; set; } = false;
         public bool IsRequired { get; set; } = false;
+        public bool AttachToLoggingScope { get; set; }
+        public string LoggingScopeKey { get; set; } = "correlation-id";
     }
 }

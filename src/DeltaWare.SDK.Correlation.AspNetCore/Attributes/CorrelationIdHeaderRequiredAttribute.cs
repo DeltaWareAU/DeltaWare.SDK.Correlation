@@ -1,6 +1,8 @@
 ﻿using DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Threading.Tasks;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Attributes
 {
@@ -10,11 +12,13 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Attributes
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public sealed class CorrelationIdHeaderRequiredAttribute : ActionFilterAttribute
     {
-        public override void OnActionExecuting(ActionExecutingContext context)
+        public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            context.HttpContext.RequestServices
+            await context.HttpContext.RequestServices
                 .GetRequiredService<AspNetCorrelationContextScope>()
-                .ValidateContext(context, true);
+                .ValidateContextAsync(context.HttpContext, true);
+
+            await base.OnActionExecutionAsync(context, next);
         }
     }
 }

@@ -1,15 +1,18 @@
 ﻿using DeltaWare.SDK.Correlation.Options;
 using DeltaWare.SDK.Correlation.Providers;
+using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Handler
 {
-    internal sealed class TraceIdHandler : DelegatingHandler
+    internal sealed class TraceIdForwardingHandler : DelegatingHandler
     {
         private readonly ITraceOptions _options;
         private readonly ITraceIdProvider _idProvider;
 
-        public TraceIdHandler(ITraceOptions options, ITraceIdProvider idProvider)
+        public TraceIdForwardingHandler(ITraceOptions options, ITraceIdProvider idProvider)
         {
             _options = options;
             _idProvider = idProvider;

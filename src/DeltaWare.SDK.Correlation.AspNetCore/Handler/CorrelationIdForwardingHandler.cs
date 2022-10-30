@@ -1,16 +1,19 @@
 ﻿using DeltaWare.SDK.Correlation.Context.Accessors;
 using DeltaWare.SDK.Correlation.Options;
+using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Handler
 {
-    internal sealed class CorrelationIdHandler : DelegatingHandler
+    internal sealed class CorrelationIdForwardingHandler : DelegatingHandler
     {
         private readonly ICorrelationOptions _options;
 
         private readonly ICorrelationContextAccessor _contextAccessor;
 
-        public CorrelationIdHandler(ICorrelationOptions options, ICorrelationContextAccessor contextAccessor)
+        public CorrelationIdForwardingHandler(ICorrelationOptions options, ICorrelationContextAccessor contextAccessor)
         {
             _options = options;
             _contextAccessor = contextAccessor;
