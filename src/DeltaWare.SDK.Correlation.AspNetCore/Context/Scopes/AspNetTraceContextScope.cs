@@ -93,7 +93,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
         {
             _httpContextAccessor.HttpContext.Response.OnStarting(() =>
             {
-                if (!_httpContextAccessor.HttpContext.Response.Headers.ContainsKey(_options.Header))
+                if (_httpContextAccessor.HttpContext.Response.Headers.ContainsKey(_options.Header))
                 {
                     return Task.CompletedTask;
                 }

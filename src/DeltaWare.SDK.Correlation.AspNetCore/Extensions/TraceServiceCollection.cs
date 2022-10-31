@@ -8,13 +8,15 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class TraceServiceCollection
     {
-        public static IServiceCollection AdTrace(this IServiceCollection services, Action<TraceOptionsBuilder>? optionsBuilder = null)
+        public static IServiceCollection AddTrace(this IServiceCollection services, Action<TraceOptionsBuilder>? optionsBuilder = null)
         {
+            services.AddHttpContextAccessor();
+
             TraceOptionsBuilder builder = new TraceOptionsBuilder(services);
 
             optionsBuilder?.Invoke(builder);
 
-            builder.InternalBuild();
+            builder.Build();
 
             return services;
         }

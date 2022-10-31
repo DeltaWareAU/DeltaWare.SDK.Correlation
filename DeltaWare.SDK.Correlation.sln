@@ -13,6 +13,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeltaWare.SDK.Correlation.M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeltaWare.SDK.MessageBroker.Core", "..\DeltaWare.SDK.MessageBroker\src\DeltaWare.SDK.MessageBroker\DeltaWare.SDK.MessageBroker.Core.csproj", "{432E4C81-C077-4531-8C2E-30C3341C6385}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8532475C-44EE-485C-AD0A-4BFD274D8D45}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeltaWare.SDK.Correlation.AspNetCore.Tests", "tests\DeltaWare.SDK.Correlation.AspNetCore.Tests\DeltaWare.SDK.Correlation.AspNetCore.Tests.csproj", "{9C074985-5316-478C-83FE-47E071E9CA9A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,12 +39,17 @@ Global
 		{432E4C81-C077-4531-8C2E-30C3341C6385}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{432E4C81-C077-4531-8C2E-30C3341C6385}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{432E4C81-C077-4531-8C2E-30C3341C6385}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C074985-5316-478C-83FE-47E071E9CA9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C074985-5316-478C-83FE-47E071E9CA9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C074985-5316-478C-83FE-47E071E9CA9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C074985-5316-478C-83FE-47E071E9CA9A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{432E4C81-C077-4531-8C2E-30C3341C6385} = {CAB0783D-F090-4059-AF71-6EAF6766F602}
+		{9C074985-5316-478C-83FE-47E071E9CA9A} = {8532475C-44EE-485C-AD0A-4BFD274D8D45}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {157AAB10-DEC1-4BED-8D09-682730D054D4}

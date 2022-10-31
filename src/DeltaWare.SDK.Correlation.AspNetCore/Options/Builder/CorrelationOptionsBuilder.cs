@@ -10,17 +10,19 @@ using System.Linq;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
 {
-    public sealed class CorrelationOptionsBuilder : CorrelationOptions
+    public class CorrelationOptionsBuilder : CorrelationOptions
     {
         public IServiceCollection Services { get; }
 
-        internal CorrelationOptionsBuilder(IServiceCollection services)
+        public CorrelationOptionsBuilder(IServiceCollection services)
         {
             Services = services;
         }
 
-        internal void InternalBuild()
+        public virtual void Build()
         {
+            Services.AddHttpContextAccessor();
+
             Services.TryAddScoped<AspNetCorrelationContextScope>();
 
             Services.TryAddSingleton<CorrelationContextAccessor>();

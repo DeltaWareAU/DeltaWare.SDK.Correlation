@@ -7,8 +7,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
+[assembly: InternalsVisibleTo("DeltaWare.SDK.Correlation.AspNetCore.Tests")]
 namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 {
     internal sealed class AspNetCorrelationContextScope : IContextScope<CorrelationContext>
@@ -89,7 +91,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
         {
             _httpContextAccessor.HttpContext.Response.OnStarting(() =>
             {
-                if (!_httpContextAccessor.HttpContext.Response.Headers.ContainsKey(_options.Header))
+                if (_httpContextAccessor.HttpContext.Response.Headers.ContainsKey(_options.Header))
                 {
                     return Task.CompletedTask;
                 }

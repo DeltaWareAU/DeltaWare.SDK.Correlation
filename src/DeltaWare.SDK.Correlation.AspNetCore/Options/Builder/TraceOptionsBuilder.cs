@@ -10,16 +10,16 @@ using System.Linq;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
 {
-    public sealed class TraceOptionsBuilder : TraceOptions
+    public class TraceOptionsBuilder : TraceOptions
     {
         public IServiceCollection Services { get; }
 
-        internal TraceOptionsBuilder(IServiceCollection services)
+        public TraceOptionsBuilder(IServiceCollection services)
         {
             Services = services;
         }
 
-        internal void InternalBuild()
+        public virtual void Build()
         {
             Services.TryAddScoped<AspNetTraceContextScope>();
             Services.TryAddSingleton<TraceContextAccessor>();

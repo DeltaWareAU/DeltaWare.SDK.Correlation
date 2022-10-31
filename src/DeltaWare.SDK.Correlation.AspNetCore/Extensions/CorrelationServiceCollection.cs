@@ -14,7 +14,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             optionsBuilder?.Invoke(builder);
 
-            builder.InternalBuild();
+            builder.Build();
 
             return services;
         }
