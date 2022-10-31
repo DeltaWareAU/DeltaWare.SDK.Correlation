@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace DeltaWare.SDK.Correlation.AspNetCore
+namespace DeltaWare.SDK.Correlation.AspNetCore.Middleware
 {
     internal class CorrelationMiddleware
     {
@@ -22,7 +22,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore
 
         public async Task Invoke(HttpContext context, AspNetCorrelationContextScope contextScope)
         {
-            bool isValid = await contextScope.ValidateContextAsync(context);
+            bool isValid = await contextScope.ValidateHeaderAsync(context);
 
             if (!isValid)
             {

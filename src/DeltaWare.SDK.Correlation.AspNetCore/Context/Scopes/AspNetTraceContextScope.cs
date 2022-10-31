@@ -7,6 +7,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using System.Linq;
 using System.Threading.Tasks;
+using DeltaWare.SDK.Correlation.AspNetCore.Attributes;
+using DeltaWare.SDK.Correlation.AspNetCore.Extensions;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 {
@@ -106,13 +108,25 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
             });
         }
 
-        public async Task<bool> ValidateContextAsync(HttpContext context, bool force = false)
+        public async Task<bool> ValidateHeaderAsync(HttpContext context, bool force = false)
         {
-            if (!force && !_options.IsRequired)
+            if (!force)
             {
-                return true;
-            }
+                if (context.Features.HasFeature<TraceIdHeaderNotRequiredAttribute>())
+                {
+                    _logger.LogTrace("Header Validation will be skipped as the TraceIdHeaderNotRequiredAttribute is present.");
 
+                    return true;
+                }
+
+                if (!_options.IsRequired)
+                {
+                    _logger.LogTrace("Header Validation will be skipped as it is not required.");
+
+                    return true;
+                }
+            }
+            
             if (ReceivedId)
             {
                 _logger?.LogDebug("Header Validation Passed. A TraceId {TraceId} was received in the HttpRequest Headers", Context.TraceId);

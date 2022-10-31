@@ -7,7 +7,7 @@ namespace Prospa.SDK.Correlation.AspNetCore.Options.Builder
 {
     public static partial class CorrelationOptionsBuilderExtensions
     {
-        public static void UseIdProvider<TIdProvider>(this CorrelationOptionsBuilder builder) where TIdProvider : class, ICorrelationIdProvider
+        public static void UseIdProvider<TIdProvider>(this ICorrelationOptionsBuilder builder) where TIdProvider : class, ICorrelationIdProvider
         {
             builder.Services.AddSingleton<ICorrelationIdProvider, TIdProvider>();
         }

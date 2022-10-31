@@ -1,4 +1,6 @@
-﻿using DeltaWare.SDK.Correlation.Context;
+﻿using DeltaWare.SDK.Correlation.AspNetCore.Attributes;
+using DeltaWare.SDK.Correlation.AspNetCore.Extensions;
+using DeltaWare.SDK.Correlation.Context;
 using DeltaWare.SDK.Correlation.Context.Accessors;
 using DeltaWare.SDK.Correlation.Context.Scope;
 using DeltaWare.SDK.Correlation.Options;
@@ -7,10 +9,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-[assembly: InternalsVisibleTo("DeltaWare.SDK.Correlation.AspNetCore.Tests")]
 namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 {
     internal sealed class AspNetCorrelationContextScope : IContextScope<CorrelationContext>
@@ -37,7 +37,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 
                 correlationId = idProvider.GenerateId();
 
-                _logger?.LogDebug("No CorrelationId was attached to the RequestHeaders. A new CorrelationId has been generated. {CorrelationId}", correlationId);
+                _logger?.LogTrace("No CorrelationId was attached to the RequestHeaders. A new CorrelationId has been generated. {CorrelationId}", correlationId);
             }
             else
             {
@@ -104,11 +104,23 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
             });
         }
 
-        public async Task<bool> ValidateContextAsync(HttpContext context, bool force = false)
+        public async Task<bool> ValidateHeaderAsync(HttpContext context, bool force = false)
         {
-            if (!force && !_options.IsRequired)
+            if (!force)
             {
-                return true;
+                if (context.Features.HasFeature<CorrelationIdHeaderNotRequiredAttribute>())
+                {
+                    _logger.LogTrace("Header Validation will be skipped as the CorrelationIdHeaderNotRequiredAttribute is present.");
+
+                    return true;
+                }
+
+                if (!_options.IsRequired)
+                {
+                    _logger.LogTrace("Header Validation will be skipped as it is not required.");
+
+                    return true;
+                }
             }
 
             if (ReceivedId)

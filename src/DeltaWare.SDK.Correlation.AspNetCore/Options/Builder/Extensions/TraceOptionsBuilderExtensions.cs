@@ -7,7 +7,7 @@ namespace Prospa.SDK.Correlation.AspNetCore.Options
 {
     public static partial class TraceOptionsBuilderExtensions
     {
-        public static void UseIdProvider<TIdProvider>(this CorrelationOptionsBuilder builder) where TIdProvider : class, ITraceIdProvider
+        public static void UseIdProvider<TIdProvider>(this ITraceOptionsBuilder builder) where TIdProvider : class, ITraceIdProvider
         {
             builder.Services.AddSingleton<ITraceIdProvider, TIdProvider>();
         }

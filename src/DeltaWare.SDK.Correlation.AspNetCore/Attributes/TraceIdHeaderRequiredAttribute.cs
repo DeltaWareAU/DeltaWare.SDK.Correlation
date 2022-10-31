@@ -16,7 +16,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Attributes
         {
             await context.HttpContext.RequestServices
                 .GetRequiredService<AspNetTraceContextScope>()
-                .ValidateContextAsync(context.HttpContext, true);
+                .ValidateHeaderAsync(context.HttpContext, true);
 
             await base.OnActionExecutionAsync(context, next);
         }

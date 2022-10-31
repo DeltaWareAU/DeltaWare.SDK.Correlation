@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace DeltaWare.SDK.Correlation.Context.Accessors
 {
-    public class BaseContextAccessor<TContext> : IContextAccessor<TContext>
+    public class ContextAccessor<TContext> : IContextAccessor<TContext>
     {
         private static readonly AsyncLocal<IContextScope<TContext>> _internalScope = new AsyncLocal<IContextScope<TContext>>();
 
@@ -18,3 +18,4 @@ namespace DeltaWare.SDK.Correlation.Context.Accessors
         public TContext Context => InternalScope.Context;
     }
 }
+ 

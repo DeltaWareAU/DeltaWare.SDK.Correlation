@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
 {
-    public class CorrelationOptionsBuilder : CorrelationOptions
+    internal class CorrelationOptionsBuilder : CorrelationOptions, ICorrelationOptionsBuilder
     {
         public IServiceCollection Services { get; }
 
@@ -19,7 +19,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
             Services = services;
         }
 
-        public virtual void Build()
+        public void Build()
         {
             Services.AddHttpContextAccessor();
 

@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
 {
-    public class TraceOptionsBuilder : TraceOptions
+    internal class TraceOptionsBuilder : TraceOptions, ITraceOptionsBuilder
     {
         public IServiceCollection Services { get; }
 
@@ -19,7 +19,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
             Services = services;
         }
 
-        public virtual void Build()
+        public void Build()
         {
             Services.TryAddScoped<AspNetTraceContextScope>();
             Services.TryAddSingleton<TraceContextAccessor>();
