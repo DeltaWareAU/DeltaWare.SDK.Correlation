@@ -1,4 +1,5 @@
 ﻿using DeltaWare.SDK.Correlation.Context.Scope;
+using System;
 
 namespace DeltaWare.SDK.Correlation.Context.Accessors
 {

@@ -1,6 +1,8 @@
 ﻿using DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes;
 using DeltaWare.SDK.Correlation.AspNetCore.Handler;
+using DeltaWare.SDK.Correlation.Context;
 using DeltaWare.SDK.Correlation.Context.Accessors;
+using DeltaWare.SDK.Correlation.Forwarder;
 using DeltaWare.SDK.Correlation.Options;
 using DeltaWare.SDK.Correlation.Providers;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,28 +25,29 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
         {
             Services.AddHttpContextAccessor();
 
-            Services.TryAddScoped<AspNetCorrelationContextScope>();
+            Services.TryAddScoped<IAspNetContextScope<CorrelationContext>, AspNetCorrelationContextScope>();
 
-            Services.TryAddSingleton<CorrelationContextAccessor>();
-            Services.TryAddSingleton<ICorrelationContextAccessor>(p => p.GetRequiredService<CorrelationContextAccessor>());
+            Services.TryAddSingleton<IIdForwarder<CorrelationContext>, DefaultCorrelationIdForwarder>();
+            Services.TryAddSingleton<ContextAccessor<CorrelationContext>>();
+            Services.TryAddSingleton<IContextAccessor<CorrelationContext>>(p => p.GetRequiredService<ContextAccessor<CorrelationContext>>());
 
-            Services.TryAddSingleton<ICorrelationIdProvider, GuidCorrelationIdProvider>();
-            Services.TryAddSingleton<ICorrelationOptions>(this);
+            Services.TryAddSingleton<IIdProvider<CorrelationContext>, IdProviderWrapper<CorrelationContext, GuidIdProvider>>();
+            Services.TryAddSingleton<IOptions<CorrelationContext>>(this);
 
             TryAddHandler(Services);
         }
 
         private static void TryAddHandler(IServiceCollection services)
         {
-            if (services.Any(x => x.ServiceType == typeof(CorrelationIdForwardingHandler)))
+            if (services.Any(x => x.ServiceType == typeof(IdForwardingHandler<CorrelationContext>)))
             {
                 return;
             }
 
-            services.AddSingleton<CorrelationIdForwardingHandler>();
+            services.AddSingleton<IdForwardingHandler<CorrelationContext>>();
             services.Configure<HttpMessageHandlerBuilder>(c =>
             {
-                c.AdditionalHandlers.Add(c.Services.GetRequiredService<CorrelationIdForwardingHandler>());
+                c.AdditionalHandlers.Add(c.Services.GetRequiredService<IdForwardingHandler<CorrelationContext>>());
             });
         }
     }

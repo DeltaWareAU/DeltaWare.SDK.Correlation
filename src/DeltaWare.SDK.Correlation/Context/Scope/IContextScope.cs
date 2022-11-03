@@ -12,6 +12,8 @@
         /// <returns>Returns <see langword="true"/> if the ID exists; otherwise <see langword="false"/>.</returns>
         bool TryGetId(out string? idValue);
 
-        bool ReceivedId { get; }
+        bool DidReceiveContextId { get; }
+
+        public string ContextId { get; }
     }
 }

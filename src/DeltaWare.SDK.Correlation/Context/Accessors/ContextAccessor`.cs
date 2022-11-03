@@ -18,4 +18,3 @@ namespace DeltaWare.SDK.Correlation.Context.Accessors
         public TContext Context => InternalScope.Context;
     }
 }
- 

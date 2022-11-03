@@ -1,4 +1,4 @@
-﻿using DeltaWare.SDK.Correlation.Context.Accessors;
+﻿using DeltaWare.SDK.Correlation.Forwarder;
 using DeltaWare.SDK.Correlation.Options;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Handler
 {
-    internal sealed class CorrelationIdForwardingHandler : DelegatingHandler
+    internal sealed class IdForwardingHandler<TContext> : DelegatingHandler where TContext : class
     {
-        private readonly ICorrelationOptions _options;
+        private readonly IOptions _options;
 
-        private readonly ICorrelationContextAccessor _contextAccessor;
+        private readonly IIdForwarder _idForwarder;
 
-        public CorrelationIdForwardingHandler(ICorrelationOptions options, ICorrelationContextAccessor contextAccessor)
+        public IdForwardingHandler(IOptions<TContext> options, IIdForwarder<TContext> idForwarder)
         {
             _options = options;
-            _contextAccessor = contextAccessor;
+            _idForwarder = idForwarder;
         }
 
         protected override HttpResponseMessage Send(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -35,7 +35,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Handler
 
         private void AttachCorrelationId(HttpRequestHeaders headers)
         {
-            string? correlationId = _contextAccessor.Context.CorrelationId;
+            string correlationId = _idForwarder.GetForwardingId();
 
             headers.Add(_options.Header, correlationId);
         }

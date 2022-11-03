@@ -7,24 +7,24 @@ using System.Threading.Tasks;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Middleware
 {
-    internal class TraceMiddleware
+    internal class ContextMiddleware<TContext> where TContext : class
     {
         private readonly RequestDelegate _next;
-        private readonly ITraceOptions _options;
+        private readonly IOptions _options;
         private readonly ILogger _logger;
 
-        public TraceMiddleware(RequestDelegate next, ITraceOptions options, ILogger<TraceMiddleware> logger)
+        public ContextMiddleware(RequestDelegate next, IOptions<TContext> options, ILogger<ContextMiddleware<TContext>> logger)
         {
             _next = next;
             _options = options;
             _logger = logger;
         }
 
-        public async Task Invoke(HttpContext context, AspNetTraceContextScope contextScope)
+        public async Task Invoke(HttpContext context, IAspNetContextScope<TContext> contextScope)
         {
             bool isValid = await contextScope.ValidateHeaderAsync(context);
 
-            if (!isValid || !contextScope.Context.HasId)
+            if (!isValid)
             {
                 return;
             }
@@ -35,7 +35,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Middleware
             {
                 using (_logger.BeginScope(new Dictionary<string, string>
                 {
-                    [_options.LoggingScopeKey] = contextScope.Context.TraceId!
+                    [_options.LoggingScopeKey] = contextScope.ContextId
                 }))
                 {
                     await _next(context);

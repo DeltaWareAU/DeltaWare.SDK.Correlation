@@ -1,4 +1,5 @@
-﻿using DeltaWare.SDK.Correlation.Options;
+﻿using DeltaWare.SDK.Correlation.Context;
+using DeltaWare.SDK.Correlation.Options;
 using DeltaWare.SDK.Correlation.Providers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
@@ -37,8 +38,8 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Tests
 
             using var server = new TestServer(builder);
 
-            var correlationIdProvider = server.Services.GetRequiredService<ICorrelationIdProvider>();
-            var options = server.Services.GetRequiredService<ICorrelationOptions>();
+            var correlationIdProvider = server.Services.GetRequiredService<IIdProvider<CorrelationContext>>();
+            var options = server.Services.GetRequiredService<IOptions<CorrelationContext>>();
 
             using var client = server.CreateClient();
 
@@ -73,8 +74,8 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Tests
 
             using var server = new TestServer(builder);
 
-            var correlationId = server.Services.GetRequiredService<ICorrelationIdProvider>().GenerateId();
-            var options = server.Services.GetRequiredService<ICorrelationOptions>();
+            var correlationId = server.Services.GetRequiredService<IIdProvider<CorrelationContext>>().GenerateId();
+            var options = server.Services.GetRequiredService<IOptions<CorrelationContext>>();
 
             var request = new HttpRequestMessage();
             request.Headers.Add(options.Header, correlationId);
@@ -103,8 +104,8 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Tests
 
             using var server = new TestServer(builder);
 
-            var correlationId = server.Services.GetRequiredService<ICorrelationIdProvider>().GenerateId();
-            var options = server.Services.GetRequiredService<ICorrelationOptions>();
+            var correlationId = server.Services.GetRequiredService<IIdProvider<CorrelationContext>>().GenerateId();
+            var options = server.Services.GetRequiredService<IOptions<CorrelationContext>>();
 
             var request = new HttpRequestMessage();
             request.Headers.Add(options.Header, correlationId);

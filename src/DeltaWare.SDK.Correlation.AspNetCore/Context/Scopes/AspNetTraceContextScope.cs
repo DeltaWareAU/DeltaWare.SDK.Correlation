@@ -1,49 +1,38 @@
-﻿using DeltaWare.SDK.Correlation.Context;
+﻿using DeltaWare.SDK.Correlation.AspNetCore.Attributes;
+using DeltaWare.SDK.Correlation.AspNetCore.Extensions;
+using DeltaWare.SDK.Correlation.Context;
 using DeltaWare.SDK.Correlation.Context.Accessors;
-using DeltaWare.SDK.Correlation.Context.Scope;
 using DeltaWare.SDK.Correlation.Options;
+using DeltaWare.SDK.Correlation.Providers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Primitives;
-using System.Linq;
-using System.Threading.Tasks;
-using DeltaWare.SDK.Correlation.AspNetCore.Attributes;
-using DeltaWare.SDK.Correlation.AspNetCore.Extensions;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 {
-    internal sealed class AspNetTraceContextScope : IContextScope<TraceContext>
+    internal sealed class AspNetTraceContextScope : BaseAspNetContextScope<TraceContext>
     {
-        private readonly ITraceOptions _options;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ILogger<ICorrelationContextAccessor>? _logger;
+        public override TraceContext Context { get; }
 
-        public TraceContext Context { get; }
+        public override bool DidReceiveContextId { get; }
 
-        public bool ReceivedId { get; }
+        public override string ContextId => Context.TraceId ?? string.Empty;
 
-        public AspNetTraceContextScope(TraceContextAccessor contextAccessor, ITraceOptions options, IHttpContextAccessor httpContextAccessor, ILogger<ICorrelationContextAccessor>? logger = null)
+        public AspNetTraceContextScope(ContextAccessor<TraceContext> contextAccessor, IOptions<TraceContext> options, IIdProvider<TraceContext> idProvider, IHttpContextAccessor httpContextAccessor, ILogger<AspNetTraceContextScope>? logger = null) : base(contextAccessor, options, idProvider, httpContextAccessor, logger)
         {
-            contextAccessor.InternalScope = this;
-
-            _options = options;
-            _httpContextAccessor = httpContextAccessor;
-            _logger = logger;
-
             if (!TryGetId(out string? traceId))
             {
-                ReceivedId = false;
+                DidReceiveContextId = false;
 
-                _logger?.LogDebug("No TraceId was attached to the RequestHeaders.");
+                logger?.LogDebug("No TraceId was attached to the RequestHeaders.");
 
                 Context = new TraceContext();
 
                 return;
             }
 
-            ReceivedId = true;
+            DidReceiveContextId = true;
 
-            _logger?.LogTrace("A TraceId {TraceId} was attached to the RequestHeaders.", traceId);
+            logger?.LogTrace("A TraceId {TraceId} was attached to the RequestHeaders.", traceId);
 
             Context = new TraceContext(traceId!);
 
@@ -53,94 +42,37 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
             }
         }
 
-        public bool TryGetId(out string? idValue)
+        protected override void OnMultipleIdsFounds(string[] foundIds)
         {
-            IHeaderDictionary headerDictionary = _httpContextAccessor.HttpContext.Request.Headers;
+            Logger?.LogWarning("Multiple TraceIds found ({TraceIds}), only the first will be used.", string.Join(',', foundIds));
+        }
 
-            if (!headerDictionary.TryGetValue(_options.Header, out StringValues values) || StringValues.IsNullOrEmpty(values))
+        protected override void OnIdAttached(string id)
+        {
+            Logger?.LogDebug("Trace ID {TraceId} has been attached to the Response Headers", id);
+        }
+
+        protected override bool CanSkipValidation(HttpContext context)
+        {
+            if (!context.Features.HasFeature<TraceIdHeaderNotRequiredAttribute>())
             {
-                idValue = null;
-
                 return false;
             }
 
-            string[] valueArray = values.ToArray();
-
-            if (valueArray.Length > 1)
-            {
-                _logger?.LogWarning("Multiple TraceIds found ({TraceIds}), only the first will be used.", values.ToString());
-            }
-
-            idValue = values.First();
+            Logger?.LogTrace("Header Validation will be skipped as the TraceIdHeaderNotRequiredAttribute is present.");
 
             return true;
+
         }
 
-        public void TrySetId(bool force = false)
+        protected override void OnValidationPassed()
         {
-            if (!force && !_options.AttachToResponse)
-            {
-                return;
-            }
-
-            if (string.IsNullOrEmpty(Context.TraceId))
-            {
-                return;
-            }
-
-            TrySetId(Context.TraceId);
+            Logger?.LogDebug("Header Validation Passed. A TraceId {TraceId} was received in the HttpRequest Headers", Context.TraceId);
         }
 
-        public void TrySetId(string traceId)
+        protected override void OnValidationFailed()
         {
-            _httpContextAccessor.HttpContext.Response.OnStarting(() =>
-            {
-                if (_httpContextAccessor.HttpContext.Response.Headers.ContainsKey(_options.Header))
-                {
-                    return Task.CompletedTask;
-                }
-
-                _httpContextAccessor.HttpContext.Response.Headers.Add(_options.Header, traceId);
-
-                _logger?.LogDebug("Trace ID {TraceId} has been attached to the Response Headers", traceId);
-
-                return Task.CompletedTask;
-            });
-        }
-
-        public async Task<bool> ValidateHeaderAsync(HttpContext context, bool force = false)
-        {
-            if (!force)
-            {
-                if (context.Features.HasFeature<TraceIdHeaderNotRequiredAttribute>())
-                {
-                    _logger.LogTrace("Header Validation will be skipped as the TraceIdHeaderNotRequiredAttribute is present.");
-
-                    return true;
-                }
-
-                if (!_options.IsRequired)
-                {
-                    _logger.LogTrace("Header Validation will be skipped as it is not required.");
-
-                    return true;
-                }
-            }
-            
-            if (ReceivedId)
-            {
-                _logger?.LogDebug("Header Validation Passed. A TraceId {TraceId} was received in the HttpRequest Headers", Context.TraceId);
-
-                return true;
-            }
-
-            _logger?.LogWarning("Header Validation Failed. A TraceId was not received in the HttpRequest Headers, responding with 400 (Bad Request).");
-
-            context.Response.StatusCode = StatusCodes.Status400BadRequest;
-
-            await context.Response.WriteAsync($"The Request Headers must contain the \"{_options.Header}\" Header.");
-
-            return false;
+            Logger?.LogWarning("Header Validation Failed. A TraceId was not received in the HttpRequest Headers, responding with 400 (Bad Request).");
         }
     }
 }

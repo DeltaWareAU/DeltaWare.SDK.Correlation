@@ -1,6 +1,8 @@
-﻿namespace DeltaWare.SDK.Correlation.Options
+﻿using DeltaWare.SDK.Correlation.Context;
+
+namespace DeltaWare.SDK.Correlation.Options
 {
-    public class TraceOptions : ITraceOptions
+    public class TraceOptions : IOptions<TraceContext>
     {
         /// <summary>
         /// 

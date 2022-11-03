@@ -1,7 +1,7 @@
 ﻿namespace DeltaWare.SDK.Correlation.Providers
 {
     /// <summary>
-    /// Provides IDs
+    /// Provides IDs.
     /// </summary>
     public interface IIdProvider
     {

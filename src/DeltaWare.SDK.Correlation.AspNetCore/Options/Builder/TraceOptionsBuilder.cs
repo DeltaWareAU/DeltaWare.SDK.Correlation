@@ -1,6 +1,8 @@
 ﻿using DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes;
 using DeltaWare.SDK.Correlation.AspNetCore.Handler;
+using DeltaWare.SDK.Correlation.Context;
 using DeltaWare.SDK.Correlation.Context.Accessors;
+using DeltaWare.SDK.Correlation.Forwarder;
 using DeltaWare.SDK.Correlation.Options;
 using DeltaWare.SDK.Correlation.Providers;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,28 +23,29 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
 
         public void Build()
         {
-            Services.TryAddScoped<AspNetTraceContextScope>();
-            Services.TryAddSingleton<TraceContextAccessor>();
+            Services.TryAddScoped<IAspNetContextScope<TraceContext>, AspNetTraceContextScope>();
+            Services.TryAddSingleton<ContextAccessor<TraceContext>>();
 
-            Services.TryAddSingleton<ITraceContextAccessor>(p => p.GetRequiredService<TraceContextAccessor>());
+            Services.TryAddSingleton<IIdForwarder<TraceContext>, DefaultTraceIdForwarder>();
+            Services.TryAddSingleton<IContextAccessor<TraceContext>>(p => p.GetRequiredService<ContextAccessor<TraceContext>>());
 
-            Services.TryAddSingleton<ITraceIdProvider, GuidTraceIdProvider>();
-            Services.TryAddSingleton<ITraceOptions>(this);
+            Services.TryAddSingleton<IIdProvider<TraceContext>, IdProviderWrapper<TraceContext, GuidIdProvider>>();
+            Services.TryAddSingleton<IOptions<TraceContext>>(this);
 
             TryAddHandler(Services);
         }
 
         private static void TryAddHandler(IServiceCollection services)
         {
-            if (services.Any(x => x.ServiceType == typeof(TraceIdForwardingHandler)))
+            if (services.Any(x => x.ServiceType == typeof(IdForwardingHandler<TraceContext>)))
             {
                 return;
             }
 
-            services.AddSingleton<TraceIdForwardingHandler>();
+            services.AddSingleton<IdForwardingHandler<TraceContext>>();
             services.Configure<HttpMessageHandlerBuilder>(c =>
             {
-                c.AdditionalHandlers.Add(c.Services.GetRequiredService<TraceIdForwardingHandler>());
+                c.AdditionalHandlers.Add(c.Services.GetRequiredService<IdForwardingHandler<TraceContext>>());
             });
         }
     }

@@ -1,4 +1,5 @@
-﻿using DeltaWare.SDK.Correlation.Options;
+﻿using DeltaWare.SDK.Correlation.Context;
+using DeltaWare.SDK.Correlation.Options;
 using DeltaWare.SDK.Correlation.Providers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
@@ -18,8 +19,8 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Tests
         public async Task ReturnBadRequest_WhenIsRequired_AndNoHeaderIsProvided()
         {
             var builder = new WebHostBuilder()
-                .Configure(app => app.UseTrace())
-                .ConfigureServices(sc => sc.AddTrace(options => options.IsRequired = true));
+                .Configure(app => app.UseTracing())
+                .ConfigureServices(sc => sc.AddTracing(options => options.IsRequired = true));
 
             using var server = new TestServer(builder);
 
@@ -32,13 +33,13 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Tests
         public async Task NotReturnBadRequest_WhenIsRequired_AndHeaderIsProvided()
         {
             var builder = new WebHostBuilder()
-                .Configure(app => app.UseTrace())
-                .ConfigureServices(sc => sc.AddTrace(options => options.IsRequired = true));
+                .Configure(app => app.UseTracing())
+                .ConfigureServices(sc => sc.AddTracing(options => options.IsRequired = true));
 
             using var server = new TestServer(builder);
 
-            var traceIdProvider = server.Services.GetRequiredService<ITraceIdProvider>();
-            var options = server.Services.GetRequiredService<ITraceOptions>();
+            var traceIdProvider = server.Services.GetRequiredService<IIdProvider<TraceContext>>();
+            var options = server.Services.GetRequiredService<IOptions<TraceContext>>();
 
             using var client = server.CreateClient();
 
@@ -54,8 +55,8 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Tests
         public async Task NotReturnBadRequest_WhenIsNotRequired_AndNoHeaderIsProvided()
         {
             var builder = new WebHostBuilder()
-                .Configure(app => app.UseTrace())
-                .ConfigureServices(sc => sc.AddTrace(options => options.IsRequired = false));
+                .Configure(app => app.UseTracing())
+                .ConfigureServices(sc => sc.AddTracing(options => options.IsRequired = false));
 
             using var server = new TestServer(builder);
 
@@ -68,13 +69,13 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Tests
         public async Task ReturnId_WhenAttachToResponseIsEnabled()
         {
             var builder = new WebHostBuilder()
-                .Configure(app => app.UseTrace())
-                .ConfigureServices(sc => sc.AddTrace(options => options.AttachToResponse = true));
+                .Configure(app => app.UseTracing())
+                .ConfigureServices(sc => sc.AddTracing(options => options.AttachToResponse = true));
 
             using var server = new TestServer(builder);
 
-            var traceId = server.Services.GetRequiredService<ITraceIdProvider>().GenerateId();
-            var options = server.Services.GetRequiredService<ITraceOptions>();
+            var traceId = server.Services.GetRequiredService<IIdProvider<TraceContext>>().GenerateId();
+            var options = server.Services.GetRequiredService<IOptions<TraceContext>>();
 
             var request = new HttpRequestMessage();
             request.Headers.Add(options.Header, traceId);
@@ -94,8 +95,8 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Tests
             string headerValue = "x-testing-header-changed";
 
             var builder = new WebHostBuilder()
-                .Configure(app => app.UseTrace())
-                .ConfigureServices(sc => sc.AddTrace(options =>
+                .Configure(app => app.UseTracing())
+                .ConfigureServices(sc => sc.AddTracing(options =>
                 {
                     options.Header = headerValue;
                     options.AttachToResponse = true;
@@ -103,8 +104,8 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Tests
 
             using var server = new TestServer(builder);
 
-            var traceId = server.Services.GetRequiredService<ITraceIdProvider>().GenerateId();
-            var options = server.Services.GetRequiredService<ITraceOptions>();
+            var traceId = server.Services.GetRequiredService<IIdProvider<TraceContext>>().GenerateId();
+            var options = server.Services.GetRequiredService<IOptions<TraceContext>>();
 
             var request = new HttpRequestMessage();
             request.Headers.Add(options.Header, traceId);

@@ -1,5 +1,6 @@
 ﻿using DeltaWare.SDK.Correlation.AspNetCore.Middleware;
 using DeltaWare.SDK.Correlation.AspNetCore.Options.Builder;
+using DeltaWare.SDK.Correlation.Context;
 using Microsoft.AspNetCore.Builder;
 using System;
 
@@ -23,7 +24,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IApplicationBuilder UseTracing(this IApplicationBuilder app)
         {
-            app.UseMiddleware<TraceMiddleware>();
+            app.UseMiddleware<ContextMiddleware<TraceContext>>();
 
             return app;
         }

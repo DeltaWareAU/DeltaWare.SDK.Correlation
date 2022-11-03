@@ -2,48 +2,34 @@
 using DeltaWare.SDK.Correlation.AspNetCore.Extensions;
 using DeltaWare.SDK.Correlation.Context;
 using DeltaWare.SDK.Correlation.Context.Accessors;
-using DeltaWare.SDK.Correlation.Context.Scope;
 using DeltaWare.SDK.Correlation.Options;
 using DeltaWare.SDK.Correlation.Providers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Primitives;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 {
-    internal sealed class AspNetCorrelationContextScope : IContextScope<CorrelationContext>
+    internal sealed class AspNetCorrelationContextScope : BaseAspNetContextScope<CorrelationContext>
     {
-        private readonly ICorrelationOptions _options;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ILogger<ICorrelationContextAccessor>? _logger;
+        public override CorrelationContext Context { get; }
+        public override bool DidReceiveContextId { get; }
+        public override string ContextId => Context.CorrelationId;
 
-        public CorrelationContext Context { get; }
-
-        public bool ReceivedId { get; }
-
-        public AspNetCorrelationContextScope(CorrelationContextAccessor contextAccessor, ICorrelationOptions options, ICorrelationIdProvider idProvider, IHttpContextAccessor httpContextAccessor, ILogger<ICorrelationContextAccessor>? logger = null)
+        public AspNetCorrelationContextScope(ContextAccessor<CorrelationContext> contextAccessor, IOptions<CorrelationContext> options, IIdProvider<CorrelationContext> idProvider, IHttpContextAccessor httpContextAccessor, ILogger? logger = null) : base(contextAccessor, options, idProvider, httpContextAccessor, logger)
         {
-            contextAccessor.InternalScope = this;
-
-            _options = options;
-            _httpContextAccessor = httpContextAccessor;
-            _logger = logger;
-
             if (!TryGetId(out string? correlationId))
             {
-                ReceivedId = false;
+                DidReceiveContextId = false;
 
                 correlationId = idProvider.GenerateId();
 
-                _logger?.LogTrace("No CorrelationId was attached to the RequestHeaders. A new CorrelationId has been generated. {CorrelationId}", correlationId);
+                Logger?.LogTrace("No CorrelationId was attached to the RequestHeaders. A new CorrelationId has been generated. {CorrelationId}", correlationId);
             }
             else
             {
-                ReceivedId = true;
+                DidReceiveContextId = true;
 
-                _logger?.LogDebug("A CorrelationId {CorrelationId} was attached to the RequestHeaders.", correlationId);
+                Logger?.LogDebug("A CorrelationId {CorrelationId} was attached to the RequestHeaders.", correlationId);
             }
 
             Context = new CorrelationContext(correlationId!);
@@ -54,89 +40,36 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
             }
         }
 
-        public bool TryGetId(out string? idValue)
+        protected override void OnMultipleIdsFounds(string[] foundIds)
         {
-            IHeaderDictionary headerDictionary = _httpContextAccessor.HttpContext.Request.Headers;
+            Logger?.LogWarning("Multiple CorrelationIds found ({CorrelationIds}), only the first value will be used.", string.Join(',', foundIds));
+        }
 
-            if (!headerDictionary.TryGetValue(_options.Header, out StringValues values) || StringValues.IsNullOrEmpty(values))
+        protected override void OnIdAttached(string id)
+        {
+            Logger?.LogDebug("Correlation ID {CorrelationId} has been attached to the Response Headers", id);
+        }
+
+        protected override bool CanSkipValidation(HttpContext context)
+        {
+            if (!context.Features.HasFeature<CorrelationIdHeaderNotRequiredAttribute>())
             {
-                idValue = null;
-
                 return false;
             }
 
-            string[] valueArray = values.ToArray();
-
-            if (valueArray.Length > 1)
-            {
-                _logger?.LogWarning("Multiple CorrelationIds found ({CorrelationIds}), only the first value will be used.", values.ToString());
-            }
-
-            idValue = values.First();
+            Logger?.LogTrace("Header Validation will be skipped as the CorrelationIdHeaderNotRequiredAttribute is present.");
 
             return true;
         }
 
-        public void TrySetId(bool force = false)
+        protected override void OnValidationPassed()
         {
-            if (!force && !_options.AttachToResponse)
-            {
-                return;
-            }
-
-            TrySetId(Context.CorrelationId);
+            Logger?.LogDebug("Header Validation Passed. A CorrelationId {CorrelationId} was received in the HttpRequest Headers", Context.CorrelationId);
         }
 
-        public void TrySetId(string correlationId)
+        protected override void OnValidationFailed()
         {
-            _httpContextAccessor.HttpContext.Response.OnStarting(() =>
-            {
-                if (_httpContextAccessor.HttpContext.Response.Headers.ContainsKey(_options.Header))
-                {
-                    return Task.CompletedTask;
-                }
-
-                _httpContextAccessor.HttpContext.Response.Headers.Add(_options.Header, correlationId);
-
-                _logger?.LogDebug("Correlation ID {CorrelationId} has been attached to the Response Headers", correlationId);
-
-                return Task.CompletedTask;
-            });
-        }
-
-        public async Task<bool> ValidateHeaderAsync(HttpContext context, bool force = false)
-        {
-            if (!force)
-            {
-                if (context.Features.HasFeature<CorrelationIdHeaderNotRequiredAttribute>())
-                {
-                    _logger.LogTrace("Header Validation will be skipped as the CorrelationIdHeaderNotRequiredAttribute is present.");
-
-                    return true;
-                }
-
-                if (!_options.IsRequired)
-                {
-                    _logger.LogTrace("Header Validation will be skipped as it is not required.");
-
-                    return true;
-                }
-            }
-
-            if (ReceivedId)
-            {
-                _logger?.LogDebug("Header Validation Passed. A CorrelationId {CorrelationId} was received in the HttpRequest Headers", Context.CorrelationId);
-
-                return true;
-            }
-
-            _logger?.LogWarning("Header Validation Failed. A CorrelationId was not received in the HttpRequest Headers, responding with 400 (Bad Request).");
-
-            context.Response.StatusCode = StatusCodes.Status400BadRequest;
-
-            await context.Response.WriteAsync($"The Request Headers must contain the \"{_options.Header}\" Header.");
-
-            return false;
+            Logger?.LogWarning("Header Validation Failed. A CorrelationId was not received in the HttpRequest Headers, responding with 400 (Bad Request).");
         }
     }
 }
