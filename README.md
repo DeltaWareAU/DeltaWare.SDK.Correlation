@@ -157,3 +157,8 @@ public FooController: ControllerBase
 	}
 }
 ```
+
+
+# Contributors
+ 
+Nuget Icon by Bernd Lakenbrink from [Noun Project](https://thenounproject.com/browse/icons/term/data-visualization/)
