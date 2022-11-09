@@ -1,6 +1,6 @@
 # Getting Started
 
-Install Nuget Package ```DeltaWare.SDK.Correlation.AspNet```
+Install Nuget Package ```DeltaWare.SDK.Correlation.AspNetCore```
 
 ## Correlation ID
 
@@ -157,6 +157,14 @@ public FooController: ControllerBase
 	}
 }
 ```
+
+
+## Releases
+
+|Package|Downloads|NuGet|
+|-|-|-|
+|**DeltaWare.SDK.Correlation**|![](https://img.shields.io/nuget/dt/DeltaWare.SDK.Correlation?style=for-the-badge)|[![Nuget](https://img.shields.io/nuget/v/DeltaWare.SDK.Correlation.svg?style=for-the-badge)](https://www.nuget.org/packages/DeltaWare.SDK.Correlation/) |
+|**DeltaWare.SDK.Correlation.AspNetCore**|![](https://img.shields.io/nuget/dt/DeltaWare.SDK.Correlation.AspNetCore?style=for-the-badge)|[![Nuget](https://img.shields.io/nuget/v/DeltaWare.SDK.Correlation.AspNetCore.svg?style=for-the-badge)](https://www.nuget.org/packages/DeltaWare.SDK.Correlation.AspNetCore/) |
 
 
 # Contributors
