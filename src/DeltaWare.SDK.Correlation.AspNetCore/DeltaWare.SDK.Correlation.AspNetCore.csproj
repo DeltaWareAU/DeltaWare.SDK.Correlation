@@ -3,12 +3,12 @@
   <PropertyGroup>
       <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
       <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-      <Version>6.0.1.1-prerelease</Version>
+      <Version>6.0.2.1-prerelease</Version>
     <Nullable>enable</Nullable>
       <Author>Bradley Clarke</Author>
       <Company>DeltaWare</Company>
       <Product>DeltaWare.SDK.Correlation</Product>
-      <!--<Description></Description>-->
+      <Description>Adds Correlation and Tracing ID Middleware for AspNet</Description>
       <PackageProjectUrl>https://github.com/DeltaWareAU/DeltaWare.SDK.Correlation</PackageProjectUrl>
       <!--<PackageReadmeFile>README.md</PackageReadmeFile>-->
       <RepositoryUrl>https://github.com/DeltaWareAU/DeltaWare.SDK.Correlation</RepositoryUrl>
