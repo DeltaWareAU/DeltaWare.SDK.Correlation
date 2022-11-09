@@ -8,7 +8,7 @@ namespace DeltaWare.SDK.Correlation.Options
         /// 
         /// </summary>
         /// <remarks><b>Default value:</b> x-tracing-id</remarks>
-        public string Header { get; set; } = "x-tracing-id";
+        public string Key { get; set; } = "x-tracing-id";
 
         public bool AttachToResponse { get; set; } = false;
         public bool IsRequired { get; set; } = false;

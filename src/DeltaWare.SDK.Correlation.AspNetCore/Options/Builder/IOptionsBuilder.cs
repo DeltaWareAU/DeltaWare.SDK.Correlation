@@ -4,7 +4,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
 {
     public interface IOptionsBuilder
     {
-        string Header { get; set; }
+        string Key { get; set; }
 
         bool AttachToResponse { get; set; }
         bool IsRequired { get; set; }

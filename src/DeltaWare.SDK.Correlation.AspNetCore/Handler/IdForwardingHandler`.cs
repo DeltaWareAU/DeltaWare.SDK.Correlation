@@ -37,7 +37,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Handler
         {
             string correlationId = _idForwarder.GetForwardingId();
 
-            headers.Add(_options.Header, correlationId);
+            headers.Add(_options.Key, correlationId);
         }
     }
 }

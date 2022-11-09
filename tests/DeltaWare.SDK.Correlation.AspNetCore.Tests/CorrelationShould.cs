@@ -43,11 +43,11 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Tests
 
             using var client = server.CreateClient();
 
-            client.DefaultRequestHeaders.Add(options.Header, correlationIdProvider.GenerateId());
+            client.DefaultRequestHeaders.Add(options.Key, correlationIdProvider.GenerateId());
 
             var response = await client.GetAsync("");
 
-            response.Headers.TryGetValues(options.Header, out _).ShouldBeFalse();
+            response.Headers.TryGetValues(options.Key, out _).ShouldBeFalse();
             response.StatusCode.ShouldNotBe(HttpStatusCode.BadRequest);
         }
 
@@ -78,11 +78,11 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Tests
             var options = server.Services.GetRequiredService<IOptions<CorrelationContext>>();
 
             var request = new HttpRequestMessage();
-            request.Headers.Add(options.Header, correlationId);
+            request.Headers.Add(options.Key, correlationId);
 
             var response = await server.CreateClient().SendAsync(request);
 
-            response.Headers.TryGetValues(options.Header, out var headerValues).ShouldBeTrue();
+            response.Headers.TryGetValues(options.Key, out var headerValues).ShouldBeTrue();
 
             headerValues!.Single().ShouldBe(correlationId);
 
@@ -98,7 +98,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Tests
                 .Configure(app => app.UseCorrelation())
                 .ConfigureServices(sc => sc.AddCorrelation(options =>
                 {
-                    options.Header = headerValue;
+                    options.Key = headerValue;
                     options.AttachToResponse = true;
                 }));
 
@@ -108,13 +108,13 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Tests
             var options = server.Services.GetRequiredService<IOptions<CorrelationContext>>();
 
             var request = new HttpRequestMessage();
-            request.Headers.Add(options.Header, correlationId);
+            request.Headers.Add(options.Key, correlationId);
 
             var response = await server.CreateClient().SendAsync(request);
 
-            options.Header.ShouldBe(headerValue);
+            options.Key.ShouldBe(headerValue);
 
-            response.Headers.TryGetValues(options.Header, out var headerValues).ShouldBeTrue();
+            response.Headers.TryGetValues(options.Key, out var headerValues).ShouldBeTrue();
 
             headerValues!.Single().ShouldBe(correlationId);
 

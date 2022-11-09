@@ -15,7 +15,7 @@ namespace DeltaWare.SDK.Correlation.Context.Accessors
         TContext Context { get; }
 
         /// <summary>
-        /// The Context Scope used to access the Header.
+        /// The Context Scope used to access the Key.
         /// </summary>
         IContextScope Scope { get; }
     }

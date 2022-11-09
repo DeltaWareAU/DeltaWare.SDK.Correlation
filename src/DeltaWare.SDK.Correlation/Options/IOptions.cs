@@ -3,9 +3,9 @@
     public interface IOptions
     {
         /// <summary>
-        /// The Header to be used for the Correlation ID
+        /// The Key used to access the ID.
         /// </summary>
-        string Header { get; }
+        string Key { get; }
 
         bool AttachToResponse { get; }
         bool IsRequired { get; set; }

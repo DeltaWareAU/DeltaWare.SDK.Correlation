@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Http;
 using System.Linq;
+using Microsoft.Extensions.Configuration;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
 {
@@ -20,7 +21,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
         {
             Services = services;
         }
-
+        
         public void Build()
         {
             Services.AddHttpContextAccessor();

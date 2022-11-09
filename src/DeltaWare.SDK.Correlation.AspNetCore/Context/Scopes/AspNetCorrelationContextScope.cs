@@ -57,19 +57,19 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
                 return false;
             }
 
-            Logger?.LogTrace("Header Validation will be skipped as the CorrelationIdHeaderNotRequiredAttribute is present.");
+            Logger?.LogTrace("Key Validation will be skipped as the CorrelationIdHeaderNotRequiredAttribute is present.");
 
             return true;
         }
 
         protected override void OnValidationPassed()
         {
-            Logger?.LogDebug("Header Validation Passed. A CorrelationId {CorrelationId} was received in the HttpRequest Headers", Context.CorrelationId);
+            Logger?.LogDebug("Key Validation Passed. A CorrelationId {CorrelationId} was received in the HttpRequest Headers", Context.CorrelationId);
         }
 
         protected override void OnValidationFailed()
         {
-            Logger?.LogWarning("Header Validation Failed. A CorrelationId was not received in the HttpRequest Headers, responding with 400 (Bad Request).");
+            Logger?.LogWarning("Key Validation Failed. A CorrelationId was not received in the HttpRequest Headers, responding with 400 (Bad Request).");
         }
     }
 }

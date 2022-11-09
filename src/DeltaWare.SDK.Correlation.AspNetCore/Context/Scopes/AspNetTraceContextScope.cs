@@ -59,7 +59,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
                 return false;
             }
 
-            Logger?.LogTrace("Header Validation will be skipped as the TraceIdHeaderNotRequiredAttribute is present.");
+            Logger?.LogTrace("Key Validation will be skipped as the TraceIdHeaderNotRequiredAttribute is present.");
 
             return true;
 
@@ -67,12 +67,12 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 
         protected override void OnValidationPassed()
         {
-            Logger?.LogDebug("Header Validation Passed. A TraceId {TraceId} was received in the HttpRequest Headers", Context.TraceId);
+            Logger?.LogDebug("Key Validation Passed. A TraceId {TraceId} was received in the HttpRequest Headers", Context.TraceId);
         }
 
         protected override void OnValidationFailed()
         {
-            Logger?.LogWarning("Header Validation Failed. A TraceId was not received in the HttpRequest Headers, responding with 400 (Bad Request).");
+            Logger?.LogWarning("Key Validation Failed. A TraceId was not received in the HttpRequest Headers, responding with 400 (Bad Request).");
         }
     }
 }

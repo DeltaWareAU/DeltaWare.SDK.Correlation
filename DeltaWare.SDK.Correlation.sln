@@ -15,7 +15,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeltaWare.SDK.MessageBroker
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8532475C-44EE-485C-AD0A-4BFD274D8D45}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeltaWare.SDK.Correlation.AspNetCore.Tests", "tests\DeltaWare.SDK.Correlation.AspNetCore.Tests\DeltaWare.SDK.Correlation.AspNetCore.Tests.csproj", "{9C074985-5316-478C-83FE-47E071E9CA9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeltaWare.SDK.Correlation.AspNetCore.Tests", "tests\DeltaWare.SDK.Correlation.AspNetCore.Tests\DeltaWare.SDK.Correlation.AspNetCore.Tests.csproj", "{9C074985-5316-478C-83FE-47E071E9CA9A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A70B627A-C192-44A8-88AD-783E41AC1AEC}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

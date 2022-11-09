@@ -36,7 +36,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
         {
             IHeaderDictionary headerDictionary = HttpContextAccessor.HttpContext.Request.Headers;
 
-            if (!headerDictionary.TryGetValue(Options.Header, out StringValues values) ||
+            if (!headerDictionary.TryGetValue(Options.Key, out StringValues values) ||
                 StringValues.IsNullOrEmpty(values))
             {
                 idValue = null;
@@ -70,12 +70,12 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
         {
             HttpContextAccessor.HttpContext.Response.OnStarting(() =>
             {
-                if (HttpContextAccessor.HttpContext.Response.Headers.ContainsKey(Options.Header))
+                if (HttpContextAccessor.HttpContext.Response.Headers.ContainsKey(Options.Key))
                 {
                     return Task.CompletedTask;
                 }
 
-                HttpContextAccessor.HttpContext.Response.Headers.Add(Options.Header, idValue);
+                HttpContextAccessor.HttpContext.Response.Headers.Add(Options.Key, idValue);
 
                 OnIdAttached(idValue);
 
@@ -94,7 +94,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 
                 if (!Options.IsRequired)
                 {
-                    Logger?.LogTrace("Header Validation will be skipped as it is not required.");
+                    Logger?.LogTrace("Key Validation will be skipped as it is not required.");
 
                     return true;
                 }
@@ -111,7 +111,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
 
-            await context.Response.WriteAsync($"The Request Headers must contain the \"{Options.Header}\" Header.");
+            await context.Response.WriteAsync($"The Request Headers must contain the \"{Options.Key}\" Key.");
 
             return false;
         }
