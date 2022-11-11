@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-      <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
+      <TargetFrameworks>net5.0;net6.0;net7.0</TargetFrameworks>
     <Nullable>enable</Nullable>
 
     <IsPackable>false</IsPackable>
@@ -26,6 +26,10 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\DeltaWare.SDK.Correlation.AspNetCore\DeltaWare.SDK.Correlation.AspNetCore.csproj" />
   </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
+        <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="7.0.0" />
+    </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
         <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.0.10" />
