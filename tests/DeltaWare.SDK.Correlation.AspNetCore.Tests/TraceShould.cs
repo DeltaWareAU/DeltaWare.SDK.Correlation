@@ -9,6 +9,9 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes;
+using DeltaWare.SDK.Correlation.Forwarder;
+using Microsoft.AspNetCore.Http;
 using Xunit;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Tests
@@ -90,7 +93,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Tests
         }
 
         [Fact]
-        public async Task ChangeHeader()
+        public async Task UseSpecifiedKey()
         {
             string headerValue = "x-testing-header-changed";
 
@@ -119,6 +122,32 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Tests
             headerValues!.Single().ShouldBe(traceId);
 
             response.StatusCode.ShouldNotBe(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public void GetForwardingId()
+        {
+            ServiceCollection services = new ServiceCollection();
+
+            services.AddTracing();
+
+            ServiceProvider serviceProvider = services.BuildServiceProvider();
+
+            string headerKey = serviceProvider.GetRequiredService<IOptions<TraceContext>>().Key;
+            string traceId = serviceProvider.GetRequiredService<IIdProvider<TraceContext>>().GenerateId();
+            IHttpContextAccessor httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
+
+            httpContextAccessor.HttpContext = new DefaultHttpContext();
+            httpContextAccessor.HttpContext.Request.Headers.Add(headerKey, traceId);
+
+            serviceProvider
+                .GetRequiredService<IAspNetContextScope<TraceContext>>()
+                .TrySetId(true);
+
+            serviceProvider
+                .GetRequiredService<IIdForwarder<TraceContext>>()
+                .GetForwardingId()
+                .ShouldNotBe(traceId);
         }
     }
 }

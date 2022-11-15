@@ -5,7 +5,7 @@ using DeltaWare.SDK.Correlation.Providers;
 using Microsoft.Extensions.DependencyInjection;
 
 // ReSharper disable once CheckNamespace
-namespace Prospa.SDK.Correlation.AspNetCore.Options
+namespace Prospa.SDK.Correlation.AspNetCore.Options.Builder
 {
     public static partial class TraceOptionsBuilderExtensions
     {

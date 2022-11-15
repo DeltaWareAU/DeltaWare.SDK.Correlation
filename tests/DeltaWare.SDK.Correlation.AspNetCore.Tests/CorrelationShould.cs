@@ -9,6 +9,9 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes;
+using DeltaWare.SDK.Correlation.Forwarder;
+using Microsoft.AspNetCore.Http;
 using Xunit;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Tests
@@ -90,7 +93,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Tests
         }
 
         [Fact]
-        public async Task ChangeHeader()
+        public async Task UseSpecifiedKey()
         {
             string headerValue = "x-testing-header-changed";
 
@@ -119,6 +122,34 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Tests
             headerValues!.Single().ShouldBe(correlationId);
 
             response.StatusCode.ShouldNotBe(HttpStatusCode.BadRequest);
+        }
+
+
+
+        [Fact]
+        public void GetForwardingId()
+        {
+            ServiceCollection services = new ServiceCollection();
+
+            services.AddCorrelation();
+
+            ServiceProvider serviceProvider = services.BuildServiceProvider();
+
+            string headerKey = serviceProvider.GetRequiredService<IOptions<CorrelationContext>>().Key;
+            string correlationId = serviceProvider.GetRequiredService<IIdProvider<CorrelationContext>>().GenerateId();
+            IHttpContextAccessor httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
+
+            httpContextAccessor.HttpContext = new DefaultHttpContext();
+            httpContextAccessor.HttpContext.Request.Headers.Add(headerKey, correlationId);
+
+            serviceProvider
+                .GetRequiredService<IAspNetContextScope<CorrelationContext>>()
+                .TrySetId(true);
+
+            serviceProvider
+                .GetRequiredService<IIdForwarder<CorrelationContext>>()
+                .GetForwardingId()
+                .ShouldBe(correlationId);
         }
     }
 }
