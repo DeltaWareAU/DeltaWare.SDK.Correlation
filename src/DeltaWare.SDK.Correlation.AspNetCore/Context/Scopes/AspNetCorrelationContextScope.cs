@@ -40,6 +40,40 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
             }
         }
 
+        protected override bool IsValidationRequired(HttpContext context)
+        {
+            if (base.IsValidationRequired(context))
+            {
+                return true;
+            }
+
+            if (!context.Features.HasFeature<CorrelationIdHeaderRequiredAttribute>())
+            {
+                return false;
+            }
+
+            Logger?.LogTrace("Header Validation will be done as the CorrelationIdHeaderRequiredAttribute is present.");
+
+            return true;
+        }
+
+        protected override bool ShouldAttachToResponse(HttpContext context)
+        {
+            if (base.ShouldAttachToResponse(context))
+            {
+                return true;
+            }
+
+            if (!context.Features.HasFeature<AttachCorrelationIdToResponseHeaderAttribute>())
+            {
+                return false;
+            }
+
+            Logger?.LogTrace("TraceId will be attached to the response headers as the AttachCorrelationIdToResponseHeaderAttribute is present.");
+
+            return true;
+        }
+
         protected override void OnMultipleIdsFounds(string[] foundIds)
         {
             Logger?.LogWarning("Multiple CorrelationIds found ({CorrelationIds}), only the first value will be used.", string.Join(',', foundIds));
@@ -64,12 +98,12 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 
         protected override void OnValidationPassed()
         {
-            Logger?.LogDebug("Key Validation Passed. A CorrelationId {CorrelationId} was received in the HttpRequest Headers", Context.CorrelationId);
+            Logger?.LogDebug("Header Validation Passed. A CorrelationId {CorrelationId} was received in the HttpRequest Headers", Context.CorrelationId);
         }
 
         protected override void OnValidationFailed()
         {
-            Logger?.LogWarning("Key Validation Failed. A CorrelationId was not received in the HttpRequest Headers, responding with 400 (Bad Request).");
+            Logger?.LogWarning("Header Validation Failed. A CorrelationId was not received in the HttpRequest Headers, responding with 400 (Bad Request).");
         }
     }
 }

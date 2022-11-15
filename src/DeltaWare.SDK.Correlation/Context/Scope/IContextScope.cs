@@ -1,7 +1,7 @@
 ﻿namespace DeltaWare.SDK.Correlation.Context.Scope
 {
     /// <summary>
-    /// The context scope used to access the Key.
+    /// The Context Scope used for accessing the Id.
     /// </summary>
     public interface IContextScope
     {
@@ -12,8 +12,14 @@
         /// <returns>Returns <see langword="true"/> if the ID exists; otherwise <see langword="false"/>.</returns>
         bool TryGetId(out string? idValue);
 
+        /// <summary>
+        /// Specifies if a Context Id was received.
+        /// </summary>
         bool DidReceiveContextId { get; }
 
+        /// <summary>
+        /// The Context Id.
+        /// </summary>
         public string ContextId { get; }
     }
 }

@@ -6,13 +6,7 @@ using System;
 namespace DeltaWare.SDK.Correlation.AspNetCore.Attributes
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public sealed class AttachCorrelationIdToResponseHeaderAttribute : ActionFilterAttribute
+    public sealed class AttachCorrelationIdToResponseHeaderAttribute : Attribute
     {
-        public override void OnActionExecuted(ActionExecutedContext context)
-        {
-            context.HttpContext.RequestServices
-                .GetRequiredService<AspNetCorrelationContextScope>()
-                .TrySetId(true);
-        }
     }
 }

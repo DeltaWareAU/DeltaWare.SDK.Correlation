@@ -4,7 +4,7 @@ using System;
 namespace DeltaWare.SDK.Correlation.Context.Accessors
 {
     /// <summary>
-    /// Used to access the Context.
+    /// Used to access the specified Context.
     /// </summary>
     /// <typeparam name="TContext">The Context <see cref="Type"/>.</typeparam>
     public interface IContextAccessor<out TContext>
@@ -15,7 +15,7 @@ namespace DeltaWare.SDK.Correlation.Context.Accessors
         TContext Context { get; }
 
         /// <summary>
-        /// The Context Scope used to access the Key.
+        /// The Context Scope used for accessing the Id.
         /// </summary>
         IContextScope Scope { get; }
     }

@@ -57,20 +57,18 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
         }
 
         public void TrySetId(bool force = false)
-        {
-            if (!force && !Options.AttachToResponse)
-            {
-                return;
-            }
+            => TrySetId(ContextId);
 
-            TrySetId(ContextId);
-        }
-
-        public void TrySetId(string idValue)
+        public void TrySetId(string idValue, bool force = false)
         {
             HttpContextAccessor.HttpContext.Response.OnStarting(() =>
             {
                 if (HttpContextAccessor.HttpContext.Response.Headers.ContainsKey(Options.Key))
+                {
+                    return Task.CompletedTask;
+                }
+
+                if (!force && !ShouldAttachToResponse(HttpContextAccessor.HttpContext))
                 {
                     return Task.CompletedTask;
                 }
@@ -87,19 +85,18 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
         {
             if (!force)
             {
-                if (CanSkipValidation(context))
+                if (CanSkipValidation(context) || !IsValidationRequired(context))
                 {
-                    return true;
-                }
-
-                if (!Options.IsRequired)
-                {
-                    Logger?.LogTrace("Key Validation will be skipped as it is not required.");
+                    Logger?.LogTrace("Header Validation will be skipped as it is not required.");
 
                     return true;
                 }
             }
-
+            else
+            {
+                Logger?.LogTrace("Header Validation will done as it has been forced.");
+            }
+            
             if (DidReceiveContextId)
             {
                 OnValidationPassed();
@@ -115,6 +112,12 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 
             return false;
         }
+
+        protected virtual bool IsValidationRequired(HttpContext context)
+            => Options.IsRequired;
+
+        protected virtual bool ShouldAttachToResponse(HttpContext context)
+            => Options.AttachToResponse;
 
         protected abstract void OnMultipleIdsFounds(string[] foundIds);
 

@@ -5,6 +5,9 @@
     /// </summary>
     public interface IContextScope<out TContext> : IContextScope
     {
+        /// <summary>
+        /// This Scopes Context.
+        /// </summary>
         TContext Context { get; }
     }
 }

@@ -42,6 +42,40 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
             }
         }
 
+        protected override bool IsValidationRequired(HttpContext context)
+        {
+            if (base.IsValidationRequired(context))
+            {
+                return true;
+            }
+
+            if (!context.Features.HasFeature<TraceIdHeaderRequiredAttribute>())
+            {
+                return false;
+            }
+
+            Logger?.LogTrace("Header Validation will be done as the TraceIdHeaderRequiredAttribute is present.");
+
+            return true;
+        }
+
+        protected override bool ShouldAttachToResponse(HttpContext context)
+        {
+            if (base.ShouldAttachToResponse(context))
+            {
+                return true;
+            }
+
+            if (!context.Features.HasFeature<AttachTraceIdToResponseHeaderAttribute>())
+            {
+                return false;
+            }
+
+            Logger?.LogTrace("TraceId will be attached to the response headers as the AttachTraceIdToResponseHeaderAttribute is present.");
+
+            return true;
+        }
+
         protected override void OnMultipleIdsFounds(string[] foundIds)
         {
             Logger?.LogWarning("Multiple TraceIds found ({TraceIds}), only the first will be used.", string.Join(',', foundIds));
@@ -59,7 +93,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
                 return false;
             }
 
-            Logger?.LogTrace("Key Validation will be skipped as the TraceIdHeaderNotRequiredAttribute is present.");
+            Logger?.LogTrace("Header Validation will be skipped as the TraceIdHeaderNotRequiredAttribute is present.");
 
             return true;
 
@@ -67,12 +101,12 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 
         protected override void OnValidationPassed()
         {
-            Logger?.LogDebug("Key Validation Passed. A TraceId {TraceId} was received in the HttpRequest Headers", Context.TraceId);
+            Logger?.LogDebug("Header Validation Passed. A TraceId {TraceId} was received in the HttpRequest Headers", Context.TraceId);
         }
 
         protected override void OnValidationFailed()
         {
-            Logger?.LogWarning("Key Validation Failed. A TraceId was not received in the HttpRequest Headers, responding with 400 (Bad Request).");
+            Logger?.LogWarning("Header Validation Failed. A TraceId was not received in the HttpRequest Headers, responding with 400 (Bad Request).");
         }
     }
 }

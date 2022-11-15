@@ -6,13 +6,7 @@ using System;
 namespace DeltaWare.SDK.Correlation.AspNetCore.Attributes
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public sealed class AttachTraceIdToResponseHeaderAttribute : ActionFilterAttribute
+    public sealed class AttachTraceIdToResponseHeaderAttribute : Attribute
     {
-        public override void OnActionExecuted(ActionExecutedContext context)
-        {
-            context.HttpContext.RequestServices
-                .GetRequiredService<AspNetTraceContextScope>()
-                .TrySetId(true);
-        }
     }
 }
