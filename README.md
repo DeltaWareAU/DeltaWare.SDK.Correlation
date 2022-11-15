@@ -15,7 +15,7 @@ public void ConfigureServices(IServiceCollection services)
 	services.AddCorrelation();
 }
 
-public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+publicï¿½voidï¿½Configure(IApplicationBuilderï¿½app,ï¿½IWebHostEnvironmentï¿½env)
 {
 	// Enables Correlation Middleware
 	app.UseCorrelation();
@@ -28,7 +28,7 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 services.AddCorrelation(o => 
 {
 	// The default value is x-correlation-id
-	o.Key = "my-custom-key;
+	o.Key = "my-custom-key";
 	o.AttachToResponse = true;
 	o.IsRequired = true;
 	o.AttachToLoggingScope = false;
@@ -70,7 +70,7 @@ public void ConfigureServices(IServiceCollection services)
 	services.AddTracing();
 }
 
-public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+publicï¿½voidï¿½Configure(IApplicationBuilderï¿½app,ï¿½IWebHostEnvironmentï¿½env)
 {
 	// Enables Correlation Middleware
 	app.UseTracing();
@@ -83,7 +83,7 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 services.AddTracing(o => 
 {
 	// The default value is x-tracing-id
-	o.Key = "my-custom-key;
+	o.Key = "my-custom-key";
 	o.AttachToResponse = true;
 	o.IsRequired = true;
 	o.AttachToLoggingScope = false;
@@ -144,29 +144,32 @@ Below is an example of using the IsRequied and IsNotRequired attributes for the 
 public FooController: ControllerBase
 {
 	// When this endpoint is called, the Correlation ID does not need to be present in the headers of the incoming request as we've used the Not Required attribute.
-	[HttpGet({fooId})]
+	[HttpGet("{fooId}")]
 	[CorrelationIdHeaderNotRequired]
 	public IActionResult Get(string fooId)
 	{
 	}
 
 	// When this endpoint is called, the Correlation ID must be present in the headers of the incoming request as the controller has the Is Required attribute.
+	// It will also attach the Correlation ID to the headers of the Http Response.
 	[HttpPost]
+	[AttachCorrelationIdToResponseHeader]
 	public IActionResult Get(FooDto newFoo)
 	{
 	}
 }
 ```
 
+>**NOTE:** This can also be done with the Trace ID.
 
 ## Releases
 
 |Package|Downloads|NuGet|
 |-|-|-|
-|**DeltaWare.SDK.Correlation**|![](https://img.shields.io/nuget/dt/DeltaWare.SDK.Correlation?style=for-the-badge)|[![Nuget](https://img.shields.io/nuget/v/DeltaWare.SDK.Correlation.svg?style=for-the-badge)](https://www.nuget.org/packages/DeltaWare.SDK.Correlation/) |
-|**DeltaWare.SDK.Correlation.AspNetCore**|![](https://img.shields.io/nuget/dt/DeltaWare.SDK.Correlation.AspNetCore?style=for-the-badge)|[![Nuget](https://img.shields.io/nuget/v/DeltaWare.SDK.Correlation.AspNetCore.svg?style=for-the-badge)](https://www.nuget.org/packages/DeltaWare.SDK.Correlation.AspNetCore/) |
+|**DeltaWare.SDK.Correlation**|![](https://img.shields.io/nuget/dt/DeltaWare.SDK.Correlation?style=for-the-badge)|[![Nuget](https://img.shields.io/nuget/v/DeltaWare.SDK.Correlation.svg?style=for-the-badge)](https://www.nuget.org/packages/DeltaWare.SDK.Correlation/)|
+|**DeltaWare.SDK.Correlation.AspNetCore**|![](https://img.shields.io/nuget/dt/DeltaWare.SDK.Correlation.AspNetCore?style=for-the-badge)|[![Nuget](https://img.shields.io/nuget/v/DeltaWare.SDK.Correlation.AspNetCore.svg?style=for-the-badge)](https://www.nuget.org/packages/DeltaWare.SDK.Correlation.AspNetCore/)|
 
 
 # Contributors
  
-Nuget Icon by Bernd Lakenbrink from [Noun Project](https://thenounproject.com/browse/icons/term/data-visualization/)
+Nuget Icon by Bernd Lakenbrink from [Noun Project](https://thenounproject.com/browse/icons/term/data-visualization/)
