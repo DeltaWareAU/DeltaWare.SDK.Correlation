@@ -7,8 +7,12 @@ using System;
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class TraceServiceCollection
+    public static partial class TraceServiceCollection
     {
+        /// <summary>
+        /// Registers the necessary dependencies to the <see cref="IServiceCollection"/> to enable Tracing.
+        /// </summary>
+        /// <param name="optionsBuilder">Configures Tracing.</param>
         public static IServiceCollection AddTracing(this IServiceCollection services, Action<IOptionsBuilder>? optionsBuilder = null)
         {
             services.AddHttpContextAccessor();
@@ -22,6 +26,9 @@ namespace Microsoft.Extensions.DependencyInjection
             return services;
         }
 
+        /// <summary>
+        /// Adds the Tracing Middleware to AspNet.
+        /// </summary>
         public static IApplicationBuilder UseTracing(this IApplicationBuilder app)
         {
             app.UseMiddleware<ContextMiddleware<TraceContext>>();

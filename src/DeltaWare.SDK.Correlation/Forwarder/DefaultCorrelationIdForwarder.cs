@@ -4,7 +4,7 @@ using DeltaWare.SDK.Correlation.Providers;
 
 namespace DeltaWare.SDK.Correlation.Forwarder
 {
-    public class DefaultCorrelationIdForwarder : BaseIdForwarder<CorrelationContext>
+    public sealed class DefaultCorrelationIdForwarder : BaseIdForwarder<CorrelationContext>
     {
         public DefaultCorrelationIdForwarder(IContextAccessor<CorrelationContext> contextAccessor, IIdProvider<CorrelationContext> idProvider) : base(contextAccessor, idProvider)
         {

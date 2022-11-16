@@ -35,6 +35,11 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Handler
 
         private void AttachCorrelationId(HttpRequestHeaders headers)
         {
+            if (headers.Contains(_options.Key))
+            {
+                return;
+            }
+
             string correlationId = _idForwarder.GetForwardingId();
 
             headers.Add(_options.Key, correlationId);

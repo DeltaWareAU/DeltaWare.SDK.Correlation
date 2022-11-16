@@ -2,6 +2,7 @@
 using DeltaWare.SDK.Correlation.AspNetCore.Handler;
 using DeltaWare.SDK.Correlation.Context;
 using DeltaWare.SDK.Correlation.Context.Accessors;
+using DeltaWare.SDK.Correlation.Context.Scope;
 using DeltaWare.SDK.Correlation.Forwarder;
 using DeltaWare.SDK.Correlation.Options;
 using DeltaWare.SDK.Correlation.Providers;
@@ -12,7 +13,7 @@ using System.Linq;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
 {
-    internal class TraceOptionsBuilder : TraceOptions, ITraceOptionsBuilder
+    internal sealed class TraceOptionsBuilder : TraceOptions, ITraceOptionsBuilder
     {
         public IServiceCollection Services { get; }
 
@@ -24,11 +25,12 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
         public void Build()
         {
             Services.TryAddScoped<IAspNetContextScope<TraceContext>, AspNetTraceContextScope>();
-            Services.TryAddSingleton<ContextAccessor<TraceContext>>();
+
+            Services.TryAddSingleton<AsyncLocalContextScope<TraceContext>>();
+            Services.TryAddSingleton<IContextScopeSetter<TraceContext>>(p => p.GetRequiredService<AsyncLocalContextScope<TraceContext>>());
+            Services.TryAddSingleton<IContextAccessor<TraceContext>>(p => p.GetRequiredService<AsyncLocalContextScope<TraceContext>>());
 
             Services.TryAddSingleton<IIdForwarder<TraceContext>, DefaultTraceIdForwarder>();
-            Services.TryAddSingleton<IContextAccessor<TraceContext>>(p => p.GetRequiredService<ContextAccessor<TraceContext>>());
-
             Services.TryAddSingleton<IIdProvider<TraceContext>, IdProviderWrapper<TraceContext, GuidIdProvider>>();
             Services.TryAddSingleton<IOptions<TraceContext>>(this);
 

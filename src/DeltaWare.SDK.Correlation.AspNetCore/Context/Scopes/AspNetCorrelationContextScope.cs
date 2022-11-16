@@ -1,7 +1,7 @@
 ﻿using DeltaWare.SDK.Correlation.AspNetCore.Attributes;
 using DeltaWare.SDK.Correlation.AspNetCore.Extensions;
 using DeltaWare.SDK.Correlation.Context;
-using DeltaWare.SDK.Correlation.Context.Accessors;
+using DeltaWare.SDK.Correlation.Context.Scope;
 using DeltaWare.SDK.Correlation.Options;
 using DeltaWare.SDK.Correlation.Providers;
 using Microsoft.AspNetCore.Http;
@@ -9,13 +9,13 @@ using Microsoft.Extensions.Logging;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 {
-    internal sealed class AspNetCorrelationContextScope : BaseAspNetContextScope<CorrelationContext>
+    internal sealed class AspNetCorrelationContextScope : AspNetContextScope<CorrelationContext>
     {
         public override CorrelationContext Context { get; }
         public override bool DidReceiveContextId { get; }
         public override string ContextId => Context.CorrelationId;
 
-        public AspNetCorrelationContextScope(ContextAccessor<CorrelationContext> contextAccessor, IOptions<CorrelationContext> options, IIdProvider<CorrelationContext> idProvider, IHttpContextAccessor httpContextAccessor, ILogger? logger = null) : base(contextAccessor, options, idProvider, httpContextAccessor, logger)
+        public AspNetCorrelationContextScope(IContextScopeSetter<CorrelationContext> contextScopeSetter, IOptions<CorrelationContext> options, IIdProvider<CorrelationContext> idProvider, IHttpContextAccessor httpContextAccessor, ILogger<CorrelationContext>? logger = null) : base(contextScopeSetter, options, httpContextAccessor, logger)
         {
             if (!TryGetId(out string? correlationId))
             {

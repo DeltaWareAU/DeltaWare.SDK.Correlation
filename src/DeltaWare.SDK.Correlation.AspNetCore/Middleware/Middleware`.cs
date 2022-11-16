@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Middleware
 {
-    internal class ContextMiddleware<TContext> where TContext : class
+    internal sealed class ContextMiddleware<TContext> where TContext : class
     {
         private readonly RequestDelegate _next;
         private readonly IOptions _options;
-        private readonly ILogger _logger;
+        private readonly ILogger? _logger;
 
-        public ContextMiddleware(RequestDelegate next, IOptions<TContext> options, ILogger<ContextMiddleware<TContext>> logger)
+        public ContextMiddleware(RequestDelegate next, IOptions<TContext> options, ILogger<TContext>? logger)
         {
             _next = next;
             _options = options;
@@ -31,19 +31,21 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Middleware
 
             contextScope.TrySetId();
 
-            if (_options.AttachToLoggingScope)
+            if (_logger == null || !_options.AttachToLoggingScope)
             {
-                using (_logger.BeginScope(new Dictionary<string, string>
-                {
-                    [_options.LoggingScopeKey] = contextScope.ContextId
-                }))
-                {
-                    await _next(context);
-                }
+                await _next(context);
             }
             else
             {
-                await _next(context);
+                Dictionary<string, string> state = new Dictionary<string, string>
+                {
+                    [_options.LoggingScopeKey] = contextScope.ContextId
+                };
+
+                using (_logger.BeginScope(state))
+                {
+                    await _next(context);
+                }
             }
         }
     }

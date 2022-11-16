@@ -1,7 +1,10 @@
-﻿using DeltaWare.SDK.Correlation.Context;
+﻿using DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes;
+using DeltaWare.SDK.Correlation.Context;
+using DeltaWare.SDK.Correlation.Forwarder;
 using DeltaWare.SDK.Correlation.Options;
 using DeltaWare.SDK.Correlation.Providers;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
@@ -9,9 +12,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes;
-using DeltaWare.SDK.Correlation.Forwarder;
-using Microsoft.AspNetCore.Http;
 using Xunit;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Tests
