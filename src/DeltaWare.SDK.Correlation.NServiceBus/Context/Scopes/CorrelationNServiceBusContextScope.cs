@@ -1,5 +1,5 @@
 ﻿using DeltaWare.SDK.Correlation.Context;
-using DeltaWare.SDK.Correlation.Context.Accessors;
+using DeltaWare.SDK.Correlation.Context.Scope;
 using DeltaWare.SDK.Correlation.Options;
 using DeltaWare.SDK.Correlation.Providers;
 using Microsoft.Extensions.Logging;
@@ -7,13 +7,13 @@ using NServiceBus.Pipeline;
 
 namespace DeltaWare.SDK.Correlation.NServiceBus.Context.Scopes
 {
-    internal class CorrelationNServiceBusContextScope : NServiceBusContextScope<CorrelationContext>
+    internal sealed class CorrelationNServiceBusContextScope : NServiceBusContextScope<CorrelationContext>
     {
         public override bool DidReceiveContextId { get; }
-        public override string ContextId { get; }
+        public override string ContextId => Context.CorrelationId;
         public override CorrelationContext Context { get; }
 
-        public CorrelationNServiceBusContextScope(ContextScopeSetter<CorrelationContext> contextScopeSetter, IIdProvider<CorrelationContext> idProvider, IOptions<CorrelationContext> options, IIncomingPhysicalMessageContext context, ILogger logger = null) : base(contextScopeSetter, options, context, logger)
+        public CorrelationNServiceBusContextScope(IContextScopeSetter<CorrelationContext> contextScopeSetter, IIdProvider<CorrelationContext> idProvider, IOptions<CorrelationContext> options, IIncomingPhysicalMessageContext context, ILogger? logger = null) : base(contextScopeSetter, options, context, logger)
         {
             if (!TryGetId(out string? correlationId))
             {

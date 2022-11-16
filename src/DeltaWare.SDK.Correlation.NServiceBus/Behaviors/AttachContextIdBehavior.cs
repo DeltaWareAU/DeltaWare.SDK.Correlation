@@ -2,17 +2,19 @@
 using DeltaWare.SDK.Correlation.Options;
 using NServiceBus.Pipeline;
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
+[assembly: InternalsVisibleTo("DeltaWare.SDK.Correlation.NServiceBus.Tests")]
 namespace DeltaWare.SDK.Correlation.NServiceBus.Behaviors
 {
-    internal class AttachContextIdBehavior : Behavior<IOutgoingPhysicalMessageContext>
+    internal abstract class AttachContextIdBehavior : Behavior<IOutgoingPhysicalMessageContext>
     {
         private readonly IIdForwarder _idForwarder;
 
         private readonly IOptions _options;
 
-        public AttachContextIdBehavior(IIdForwarder idForwarder, IOptions options)
+        protected AttachContextIdBehavior(IIdForwarder idForwarder, IOptions options)
         {
             _idForwarder = idForwarder;
             _options = options;

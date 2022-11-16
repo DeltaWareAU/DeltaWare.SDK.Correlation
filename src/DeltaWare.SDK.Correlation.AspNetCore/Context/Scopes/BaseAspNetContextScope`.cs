@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using System.Linq;
 using System.Threading.Tasks;
+using DeltaWare.SDK.Correlation.Context.Scope;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 {
@@ -21,9 +22,9 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 
         public abstract string ContextId { get; }
 
-        protected AspNetContextScope(ContextScopeSetter<TContext> contextScopeSetter, IOptions<TContext> options, IHttpContextAccessor httpContextAccessor, ILogger? logger = null)
+        protected AspNetContextScope(IContextScopeSetter<TContext> contextScopeSetter, IOptions<TContext> options, IHttpContextAccessor httpContextAccessor, ILogger? logger = null)
         {
-            contextScopeSetter.InternalScope = this;
+            contextScopeSetter.SetScope(this);
 
             Options = options;
             HttpContextAccessor = httpContextAccessor;
@@ -81,18 +82,17 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 
         public async Task<bool> ValidateHeaderAsync(HttpContext context, bool force = false)
         {
-            if (!force)
-            {
-                if (CanSkipValidation(context) || !IsValidationRequired(context))
-                {
-                    Logger?.LogTrace("Header Validation will be skipped as it is not required.");
-
-                    return true;
-                }
-            }
-            else
+            if (force)
             {
                 Logger?.LogTrace("Header Validation will done as it has been forced.");
+
+                
+            }
+            else if (CanSkipValidation(context) || !IsValidationRequired(context))
+            {
+                Logger?.LogTrace("Header Validation will be skipped as it is not required.");
+
+                return true;
             }
 
             if (DidReceiveContextId)

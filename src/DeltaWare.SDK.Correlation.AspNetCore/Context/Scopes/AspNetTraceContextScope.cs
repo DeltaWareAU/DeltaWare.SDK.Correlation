@@ -1,7 +1,7 @@
 ﻿using DeltaWare.SDK.Correlation.AspNetCore.Attributes;
 using DeltaWare.SDK.Correlation.AspNetCore.Extensions;
 using DeltaWare.SDK.Correlation.Context;
-using DeltaWare.SDK.Correlation.Context.Accessors;
+using DeltaWare.SDK.Correlation.Context.Scope;
 using DeltaWare.SDK.Correlation.Options;
 using DeltaWare.SDK.Correlation.Providers;
 using Microsoft.AspNetCore.Http;
@@ -17,7 +17,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 
         public override string ContextId => Context.TraceId ?? string.Empty;
 
-        public AspNetTraceContextScope(ContextScopeSetter<TraceContext> contextScopeSetter, IOptions<TraceContext> options, IIdProvider<TraceContext> idProvider, IHttpContextAccessor httpContextAccessor, ILogger<AspNetTraceContextScope>? logger = null) : base(contextScopeSetter, options, httpContextAccessor, logger)
+        public AspNetTraceContextScope(IContextScopeSetter<TraceContext> contextScopeSetter, IOptions<TraceContext> options, IIdProvider<TraceContext> idProvider, IHttpContextAccessor httpContextAccessor, ILogger<AspNetTraceContextScope>? logger = null) : base(contextScopeSetter, options, httpContextAccessor, logger)
         {
             if (!TryGetId(out string? traceId))
             {

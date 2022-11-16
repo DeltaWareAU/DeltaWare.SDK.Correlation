@@ -5,13 +5,13 @@ using NServiceBus.Pipeline;
 
 namespace DeltaWare.SDK.Correlation.NServiceBus.Behaviors
 {
-    internal class AttachCorrelationIdBehavior : AttachContextIdBehavior
+    internal sealed class AttachCorrelationIdBehavior : AttachContextIdBehavior
     {
         public AttachCorrelationIdBehavior(IIdForwarder<CorrelationContext> idForwarder, IOptions<CorrelationContext> options) : base(idForwarder, options)
         {
         }
 
-        internal class Register : RegisterStep
+        internal sealed class Register : RegisterStep
         {
             public Register() : base(nameof(AttachCorrelationIdBehavior), typeof(AttachCorrelationIdBehavior), "Attach Correlation Id to Outgoing Message")
             {

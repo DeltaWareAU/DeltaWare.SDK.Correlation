@@ -4,8 +4,10 @@ using Microsoft.Extensions.Logging;
 using NServiceBus.Pipeline;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
+[assembly: InternalsVisibleTo("DeltaWare.SDK.Correlation.NServiceBus.Tests")]
 namespace DeltaWare.SDK.Correlation.NServiceBus.Behaviors
 {
     internal abstract class RetrieveContextIdBehavior<TContext> : Behavior<IIncomingPhysicalMessageContext> where TContext : class
@@ -23,7 +25,10 @@ namespace DeltaWare.SDK.Correlation.NServiceBus.Behaviors
         {
             NServiceBusContextScope<TContext> contextScope = CreateContextScope(context);
 
-            contextScope.ValidateHeader();
+            if (!contextScope.ValidateHeader())
+            {
+                throw new ArgumentException($"{_options.Key} was not Attached to the Headers of the Incoming Message.");
+            }
 
             if (_logger == null || !_options.AttachToLoggingScope)
             {

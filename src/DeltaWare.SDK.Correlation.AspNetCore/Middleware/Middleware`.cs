@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Middleware
 {
-    internal class ContextMiddleware<TContext> where TContext : class
+    internal sealed class ContextMiddleware<TContext> where TContext : class
     {
         private readonly RequestDelegate _next;
         private readonly IOptions _options;

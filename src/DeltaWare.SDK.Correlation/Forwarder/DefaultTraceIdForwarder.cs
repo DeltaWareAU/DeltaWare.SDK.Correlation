@@ -4,7 +4,7 @@ using DeltaWare.SDK.Correlation.Providers;
 
 namespace DeltaWare.SDK.Correlation.Forwarder
 {
-    public class DefaultTraceIdForwarder : BaseIdForwarder<TraceContext>
+    public sealed class DefaultTraceIdForwarder : BaseIdForwarder<TraceContext>
     {
         public DefaultTraceIdForwarder(IContextAccessor<TraceContext> contextAccessor, IIdProvider<TraceContext> idProvider) : base(contextAccessor, idProvider)
         {

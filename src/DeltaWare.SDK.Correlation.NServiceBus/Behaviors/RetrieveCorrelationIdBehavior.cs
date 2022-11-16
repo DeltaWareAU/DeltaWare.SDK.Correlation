@@ -1,5 +1,5 @@
 ﻿using DeltaWare.SDK.Correlation.Context;
-using DeltaWare.SDK.Correlation.Context.Accessors;
+using DeltaWare.SDK.Correlation.Context.Scope;
 using DeltaWare.SDK.Correlation.NServiceBus.Context.Scopes;
 using DeltaWare.SDK.Correlation.Options;
 using DeltaWare.SDK.Correlation.Providers;
@@ -8,17 +8,17 @@ using NServiceBus.Pipeline;
 
 namespace DeltaWare.SDK.Correlation.NServiceBus.Behaviors
 {
-    internal class RetrieveCorrelationIdBehavior : RetrieveContextIdBehavior<CorrelationContext>
+    internal sealed class RetrieveCorrelationIdBehavior : RetrieveContextIdBehavior<CorrelationContext>
     {
-        private readonly ContextScopeSetter<CorrelationContext> _scopeSetter;
+        private readonly IContextScopeSetter<CorrelationContext> _scopeSetter;
 
         private readonly IIdProvider<CorrelationContext> _idProvider;
 
         private readonly IOptions<CorrelationContext> _options;
 
-        private readonly ILogger _logger;
+        private readonly ILogger? _logger;
 
-        public RetrieveCorrelationIdBehavior(ContextScopeSetter<CorrelationContext> scopeSetter, IIdProvider<CorrelationContext> idProvider, IOptions<CorrelationContext> options, ILogger<CorrelationContext>? logger = null) : base(options, logger)
+        public RetrieveCorrelationIdBehavior(IContextScopeSetter<CorrelationContext> scopeSetter, IIdProvider<CorrelationContext> idProvider, IOptions<CorrelationContext> options, ILogger<CorrelationContext>? logger = null) : base(options, logger)
         {
             _scopeSetter = scopeSetter;
             _idProvider = idProvider;
@@ -29,7 +29,7 @@ namespace DeltaWare.SDK.Correlation.NServiceBus.Behaviors
         protected override NServiceBusContextScope<CorrelationContext> CreateContextScope(IIncomingPhysicalMessageContext context)
             => new CorrelationNServiceBusContextScope(_scopeSetter, _idProvider, _options, context, _logger);
 
-        internal class Register : RegisterStep
+        internal sealed class Register : RegisterStep
         {
             public Register() : base(nameof(RetrieveCorrelationIdBehavior), typeof(RetrieveCorrelationIdBehavior), "Retrieve Incoming Message Correlation Id")
             {

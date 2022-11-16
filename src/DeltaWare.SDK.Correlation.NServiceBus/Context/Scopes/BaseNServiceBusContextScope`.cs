@@ -19,9 +19,9 @@ namespace DeltaWare.SDK.Correlation.NServiceBus.Context.Scopes
 
         public abstract TContext Context { get; }
 
-        protected NServiceBusContextScope(ContextScopeSetter<TContext> contextScopeSetter, IOptions<TContext> options, IIncomingPhysicalMessageContext context, ILogger? logger = null)
+        protected NServiceBusContextScope(IContextScopeSetter<TContext> contextScopeSetter, IOptions<TContext> options, IIncomingPhysicalMessageContext context, ILogger? logger = null)
         {
-            contextScopeSetter.InternalScope = this;
+            contextScopeSetter.SetScope(this);
 
             _options = options;
             _context = context;
@@ -33,18 +33,15 @@ namespace DeltaWare.SDK.Correlation.NServiceBus.Context.Scopes
 
         public bool ValidateHeader(bool force = false)
         {
-            if (!force)
-            {
-                if (_options.IsRequired)
-                {
-                    Logger?.LogTrace("Header Validation will be skipped as it is not required.");
-
-                    return true;
-                }
-            }
-            else
+            if (force)
             {
                 Logger?.LogTrace("Header Validation will done as it has been forced.");
+            }
+            else if (!_options.IsRequired)
+            {
+                Logger?.LogTrace("Header Validation will be skipped as it is not required.");
+
+                return true;
             }
 
             if (DidReceiveContextId)

@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Http;
 using System.Linq;
+using DeltaWare.SDK.Correlation.Context.Scope;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
 {
@@ -24,11 +25,12 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
         public void Build()
         {
             Services.TryAddScoped<IAspNetContextScope<TraceContext>, AspNetTraceContextScope>();
-            Services.TryAddSingleton<ContextScopeSetter<TraceContext>>();
+
+            Services.TryAddSingleton<AsyncLocalContextScope<TraceContext>>();
+            Services.TryAddSingleton<IContextScopeSetter<TraceContext>>(p => p.GetRequiredService<AsyncLocalContextScope<TraceContext>>());
+            Services.TryAddSingleton<IContextAccessor<TraceContext>>(p => p.GetRequiredService<AsyncLocalContextScope<TraceContext>>());
 
             Services.TryAddSingleton<IIdForwarder<TraceContext>, DefaultTraceIdForwarder>();
-            Services.TryAddSingleton<IContextAccessor<TraceContext>>(p => p.GetRequiredService<ContextScopeSetter<TraceContext>>());
-
             Services.TryAddSingleton<IIdProvider<TraceContext>, IdProviderWrapper<TraceContext, GuidIdProvider>>();
             Services.TryAddSingleton<IOptions<TraceContext>>(this);
 

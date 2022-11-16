@@ -5,13 +5,13 @@ using NServiceBus.Pipeline;
 
 namespace DeltaWare.SDK.Correlation.NServiceBus.Behaviors
 {
-    internal class AttachTraceIdBehavior : AttachContextIdBehavior
+    internal sealed class AttachTraceIdBehavior : AttachContextIdBehavior
     {
         public AttachTraceIdBehavior(IIdForwarder<TraceContext> idForwarder, IOptions<TraceContext> options) : base(idForwarder, options)
         {
         }
 
-        internal class Register : RegisterStep
+        internal sealed class Register : RegisterStep
         {
             public Register() : base(nameof(AttachTraceIdBehavior), typeof(AttachTraceIdBehavior), "Attach Trace Id to Outgoing Message")
             {
