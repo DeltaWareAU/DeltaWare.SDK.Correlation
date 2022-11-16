@@ -2,6 +2,8 @@
 
 Install Nuget Package ```DeltaWare.SDK.Correlation.AspNetCore```
 
+[**NServiceBus Documentation**](https://github.com/DeltaWareAU/DeltaWare.SDK.Correlation/tree/main/src/DeltaWare.SDK.Correlation.NServiceBus/README.md)
+
 ## Correlation ID
 
 The Correlation ID will remaing static for the lifetime of a process. This enables correlation of a process over multiple services. 
@@ -15,7 +17,7 @@ public void ConfigureServices(IServiceCollection services)
 	services.AddCorrelation();
 }
 
-public�void�Configure(IApplicationBuilder�app,�IWebHostEnvironment�env)
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 {
 	// Enables Correlation Middleware
 	app.UseCorrelation();
@@ -35,6 +37,7 @@ services.AddCorrelation(o =>
 	// The default value is correlation-id
 	o.LoggingScopeKey = "my-custom-scope"
 	o.UseIdProvider<MyCustomIdProvider>();
+	o.UseIdForwarder<MyCustomIdForwarder>();
 });
 ```
 
@@ -70,7 +73,7 @@ public void ConfigureServices(IServiceCollection services)
 	services.AddTracing();
 }
 
-public�void�Configure(IApplicationBuilder�app,�IWebHostEnvironment�env)
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 {
 	// Enables Correlation Middleware
 	app.UseTracing();
@@ -90,6 +93,7 @@ services.AddTracing(o =>
 	// The default value is tracing-id
 	o.LoggingScopeKey = "my-custom-scope"
 	o.UseIdProvider<MyCustomIdProvider>();
+	o.UseIdForwarder<MyCustomIdForwarder>();
 });
 ```
 
