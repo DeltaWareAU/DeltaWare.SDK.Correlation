@@ -168,6 +168,7 @@ public FooController: ControllerBase
 |-|-|-|
 |**DeltaWare.SDK.Correlation**|![](https://img.shields.io/nuget/dt/DeltaWare.SDK.Correlation?style=for-the-badge)|[![Nuget](https://img.shields.io/nuget/v/DeltaWare.SDK.Correlation.svg?style=for-the-badge)](https://www.nuget.org/packages/DeltaWare.SDK.Correlation/)|
 |**DeltaWare.SDK.Correlation.AspNetCore**|![](https://img.shields.io/nuget/dt/DeltaWare.SDK.Correlation.AspNetCore?style=for-the-badge)|[![Nuget](https://img.shields.io/nuget/v/DeltaWare.SDK.Correlation.AspNetCore.svg?style=for-the-badge)](https://www.nuget.org/packages/DeltaWare.SDK.Correlation.AspNetCore/)|
+|**DeltaWare.SDK.Correlation.NServiceBus**|![](https://img.shields.io/nuget/dt/DeltaWare.SDK.Correlation.NServiceBus?style=for-the-badge)|[![Nuget](https://img.shields.io/nuget/v/DeltaWare.SDK.Correlation.NServiceBus.svg?style=for-the-badge)](https://www.nuget.org/packages/DeltaWare.SDK.Correlation.NServiceBus/)|
 
 
 # Contributors
