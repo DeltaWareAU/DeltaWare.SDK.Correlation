@@ -7,8 +7,12 @@ using System;
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class CorrelationServiceCollection
+    public static partial class CorrelationServiceCollection
     {
+        /// <summary>
+        /// Registers the necessary dependencies to the <see cref="IServiceCollection"/> to enable Correlation.
+        /// </summary>
+        /// <param name="optionsBuilder">Configures Correlation.</param>
         public static IServiceCollection AddCorrelation(this IServiceCollection services, Action<IOptionsBuilder>? optionsBuilder = null)
         {
             CorrelationOptionsBuilder builder = new CorrelationOptionsBuilder(services);
@@ -20,6 +24,9 @@ namespace Microsoft.Extensions.DependencyInjection
             return services;
         }
 
+        /// <summary>
+        /// Adds the Correlation Middleware to AspNet.
+        /// </summary>
         public static IApplicationBuilder UseCorrelation(this IApplicationBuilder app)
         {
             app.UseMiddleware<ContextMiddleware<CorrelationContext>>();

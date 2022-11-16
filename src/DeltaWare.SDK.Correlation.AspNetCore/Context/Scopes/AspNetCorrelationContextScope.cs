@@ -15,7 +15,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
         public override bool DidReceiveContextId { get; }
         public override string ContextId => Context.CorrelationId;
 
-        public AspNetCorrelationContextScope(IContextScopeSetter<CorrelationContext> contextScopeSetter, IOptions<CorrelationContext> options, IIdProvider<CorrelationContext> idProvider, IHttpContextAccessor httpContextAccessor, ILogger? logger = null) : base(contextScopeSetter, options, httpContextAccessor, logger)
+        public AspNetCorrelationContextScope(IContextScopeSetter<CorrelationContext> contextScopeSetter, IOptions<CorrelationContext> options, IIdProvider<CorrelationContext> idProvider, IHttpContextAccessor httpContextAccessor, ILogger<CorrelationContext>? logger = null) : base(contextScopeSetter, options, httpContextAccessor, logger)
         {
             if (!TryGetId(out string? correlationId))
             {

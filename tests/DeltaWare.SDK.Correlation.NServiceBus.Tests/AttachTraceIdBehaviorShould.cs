@@ -1,3 +1,4 @@
+using DeltaWare.SDK.Correlation.Context;
 using DeltaWare.SDK.Correlation.Forwarder;
 using DeltaWare.SDK.Correlation.NServiceBus.Behaviors;
 using DeltaWare.SDK.Correlation.Options;
@@ -7,7 +8,6 @@ using Shouldly;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DeltaWare.SDK.Correlation.Context;
 using Xunit;
 
 namespace DeltaWare.SDK.Correlation.NServiceBus.Tests
@@ -43,7 +43,7 @@ namespace DeltaWare.SDK.Correlation.NServiceBus.Tests
 
             mockIdProvider.Verify(m => m.GetForwardingId(), Times.Once);
         }
-        
+
         [Fact]
         public async Task Not_Add_TraceId_ToHeader()
         {

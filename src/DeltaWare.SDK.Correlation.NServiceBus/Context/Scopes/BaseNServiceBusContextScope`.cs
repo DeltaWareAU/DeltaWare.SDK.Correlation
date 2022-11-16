@@ -1,5 +1,4 @@
-﻿using DeltaWare.SDK.Correlation.Context.Accessors;
-using DeltaWare.SDK.Correlation.Context.Scope;
+﻿using DeltaWare.SDK.Correlation.Context.Scope;
 using DeltaWare.SDK.Correlation.Options;
 using Microsoft.Extensions.Logging;
 using NServiceBus.Pipeline;

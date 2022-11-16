@@ -13,7 +13,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Middleware
         private readonly IOptions _options;
         private readonly ILogger? _logger;
 
-        public ContextMiddleware(RequestDelegate next, IOptions<TContext> options, ILogger<ContextMiddleware<TContext>>? logger)
+        public ContextMiddleware(RequestDelegate next, IOptions<TContext> options, ILogger<TContext>? logger)
         {
             _next = next;
             _options = options;

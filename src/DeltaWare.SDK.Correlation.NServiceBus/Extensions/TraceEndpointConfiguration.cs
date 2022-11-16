@@ -1,11 +1,13 @@
 ﻿using DeltaWare.SDK.Correlation.NServiceBus.Behaviors;
-using NServiceBus;
 
 // ReSharper disable once CheckNamespace
-namespace DeltaWare.SDK.Correlation.NServiceBus.Extensions
+namespace NServiceBus
 {
-    public static class TraceEndpointConfiguration
+    public static partial class TraceEndpointConfiguration
     {
+        /// <summary>
+        /// Adds the Tracing Middleware to NServiceBus.
+        /// </summary>
         public static void UseTracing(this EndpointConfiguration configuration)
         {
             configuration.RegisterComponents(components =>

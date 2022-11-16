@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading;
-using DeltaWare.SDK.Correlation.Context.Accessors;
+﻿using DeltaWare.SDK.Correlation.Context.Accessors;
 using DeltaWare.SDK.Correlation.Context.Scope;
 
 namespace DeltaWare.SDK.Correlation.NServiceBus.Tests.Mocking

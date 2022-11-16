@@ -1,11 +1,13 @@
 ﻿using DeltaWare.SDK.Correlation.NServiceBus.Behaviors;
-using NServiceBus;
 
 // ReSharper disable once CheckNamespace
-namespace DeltaWare.SDK.Correlation.NServiceBus.Extensions
+namespace NServiceBus
 {
-    public static class CorrelationEndpointConfiguration
+    public static partial class CorrelationEndpointConfiguration
     {
+        /// <summary>
+        /// Adds the Correlation Middleware to NServiceBus.
+        /// </summary>
         public static void UseCorrelation(this EndpointConfiguration configuration)
         {
             configuration.RegisterComponents(components =>

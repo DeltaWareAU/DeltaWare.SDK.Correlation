@@ -1,6 +1,5 @@
-﻿using System;
+﻿using DeltaWare.SDK.Correlation.Context.Accessors;
 using System.Threading;
-using DeltaWare.SDK.Correlation.Context.Accessors;
 
 namespace DeltaWare.SDK.Correlation.Context.Scope
 {

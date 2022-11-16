@@ -1,11 +1,10 @@
-﻿using DeltaWare.SDK.Correlation.Context.Accessors;
+﻿using DeltaWare.SDK.Correlation.Context.Scope;
 using DeltaWare.SDK.Correlation.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using System.Linq;
 using System.Threading.Tasks;
-using DeltaWare.SDK.Correlation.Context.Scope;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 {
@@ -86,7 +85,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
             {
                 Logger?.LogTrace("Header Validation will done as it has been forced.");
 
-                
+
             }
             else if (CanSkipValidation(context) || !IsValidationRequired(context))
             {

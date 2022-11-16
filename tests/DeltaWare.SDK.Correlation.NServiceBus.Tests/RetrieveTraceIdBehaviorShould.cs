@@ -1,16 +1,14 @@
 ﻿using DeltaWare.SDK.Correlation.Context;
 using DeltaWare.SDK.Correlation.NServiceBus.Behaviors;
+using DeltaWare.SDK.Correlation.NServiceBus.Tests.Mocking;
 using DeltaWare.SDK.Correlation.Options;
-using DeltaWare.SDK.Correlation.Providers;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NServiceBus.Testing;
 using Shouldly;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DeltaWare.SDK.Correlation.Context.Scope;
-using DeltaWare.SDK.Correlation.NServiceBus.Tests.Mocking;
-using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace DeltaWare.SDK.Correlation.NServiceBus.Tests
@@ -24,7 +22,7 @@ namespace DeltaWare.SDK.Correlation.NServiceBus.Tests
             string key = "my-test-key";
 
             MockContextScope<TraceContext> contextScope = new MockContextScope<TraceContext>();
-            
+
             Mock<IOptions<TraceContext>> mockOptions = new Mock<IOptions<TraceContext>>();
 
             mockOptions.Setup(p => p.Key).Returns(key);
@@ -39,9 +37,9 @@ namespace DeltaWare.SDK.Correlation.NServiceBus.Tests
                     { key, traceId }
                 }
             };
-            
+
             await behavior.Invoke(context, () => Task.CompletedTask);
-            
+
             contextScope.Context.TraceId.ShouldBe(traceId);
         }
 
@@ -51,7 +49,7 @@ namespace DeltaWare.SDK.Correlation.NServiceBus.Tests
             string key = "my-test-key";
 
             MockContextScope<TraceContext> contextScope = new MockContextScope<TraceContext>();
-            
+
             Mock<IOptions<TraceContext>> mockOptions = new Mock<IOptions<TraceContext>>();
 
             mockOptions.Setup(p => p.Key).Returns(key);
@@ -60,9 +58,9 @@ namespace DeltaWare.SDK.Correlation.NServiceBus.Tests
             RetrieveContextIdBehavior<TraceContext> behavior = new RetrieveTraceIdBehavior(contextScope, mockOptions.Object);
 
             TestableIncomingPhysicalMessageContext context = new TestableIncomingPhysicalMessageContext();
-            
+
             await behavior.Invoke(context, () => Task.CompletedTask);
-            
+
             contextScope.Context.HasId.ShouldBeFalse();
         }
 
@@ -74,7 +72,7 @@ namespace DeltaWare.SDK.Correlation.NServiceBus.Tests
             string loggingScopeKey = "my-test-logging-scope-key";
 
             MockContextScope<TraceContext> contextScope = new MockContextScope<TraceContext>();
-            
+
             Mock<IOptions<TraceContext>> mockOptions = new Mock<IOptions<TraceContext>>();
             Mock<ILogger<TraceContext>> mockLogger = new Mock<ILogger<TraceContext>>();
 
@@ -84,7 +82,6 @@ namespace DeltaWare.SDK.Correlation.NServiceBus.Tests
             mockOptions.Setup(p => p.LoggingScopeKey).Returns(loggingScopeKey);
 
             mockLogger.Setup(m => m.BeginScope(It.IsAny<Dictionary<string, string>>())).Returns(new MockDisposable());
-
 
             RetrieveContextIdBehavior<TraceContext> behavior = new RetrieveTraceIdBehavior(contextScope, mockOptions.Object, mockLogger.Object);
 
@@ -99,7 +96,7 @@ namespace DeltaWare.SDK.Correlation.NServiceBus.Tests
             await behavior.Invoke(context, () => Task.CompletedTask);
 
             contextScope.Context.TraceId.ShouldBe(traceId);
-            
+
             mockLogger.Verify(m => m.BeginScope(It.IsAny<Dictionary<string, string>>()), Times.Once);
             mockLogger.Verify(m => m.BeginScope(It.Is<Dictionary<string, string>>(v => v.ContainsKey(loggingScopeKey) && v[loggingScopeKey] == traceId)), Times.Once);
         }

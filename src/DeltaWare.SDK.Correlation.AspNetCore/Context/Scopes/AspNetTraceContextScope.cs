@@ -17,7 +17,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 
         public override string ContextId => Context.TraceId ?? string.Empty;
 
-        public AspNetTraceContextScope(IContextScopeSetter<TraceContext> contextScopeSetter, IOptions<TraceContext> options, IIdProvider<TraceContext> idProvider, IHttpContextAccessor httpContextAccessor, ILogger<AspNetTraceContextScope>? logger = null) : base(contextScopeSetter, options, httpContextAccessor, logger)
+        public AspNetTraceContextScope(IContextScopeSetter<TraceContext> contextScopeSetter, IOptions<TraceContext> options, IIdProvider<TraceContext> idProvider, IHttpContextAccessor httpContextAccessor, ILogger<TraceContext>? logger = null) : base(contextScopeSetter, options, httpContextAccessor, logger)
         {
             if (!TryGetId(out string? traceId))
             {

@@ -1,17 +1,15 @@
 ﻿using DeltaWare.SDK.Correlation.Context;
 using DeltaWare.SDK.Correlation.NServiceBus.Behaviors;
+using DeltaWare.SDK.Correlation.NServiceBus.Tests.Mocking;
 using DeltaWare.SDK.Correlation.Options;
 using DeltaWare.SDK.Correlation.Providers;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NServiceBus.Testing;
 using Shouldly;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using DeltaWare.SDK.Correlation.Context.Scope;
-using DeltaWare.SDK.Correlation.NServiceBus.Tests.Mocking;
-using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace DeltaWare.SDK.Correlation.NServiceBus.Tests
@@ -41,9 +39,9 @@ namespace DeltaWare.SDK.Correlation.NServiceBus.Tests
                     { key, correlationId }
                 }
             };
-            
+
             await behavior.Invoke(context, () => Task.CompletedTask);
-            
+
             contextScope.Context.CorrelationId.ShouldBe(correlationId);
 
             mockIdProvider.Verify(m => m.GenerateId(), Times.Never);
@@ -68,9 +66,9 @@ namespace DeltaWare.SDK.Correlation.NServiceBus.Tests
             RetrieveContextIdBehavior<CorrelationContext> behavior = new RetrieveCorrelationIdBehavior(contextScope, mockIdProvider.Object, mockOptions.Object);
 
             TestableIncomingPhysicalMessageContext context = new TestableIncomingPhysicalMessageContext();
-            
+
             await behavior.Invoke(context, () => Task.CompletedTask);
-            
+
             contextScope.Context.CorrelationId.ShouldBe(correlationId);
 
             mockIdProvider.Verify(m => m.GenerateId(), Times.Once);

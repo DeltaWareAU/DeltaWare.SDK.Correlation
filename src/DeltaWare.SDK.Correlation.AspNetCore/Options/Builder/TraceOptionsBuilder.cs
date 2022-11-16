@@ -2,6 +2,7 @@
 using DeltaWare.SDK.Correlation.AspNetCore.Handler;
 using DeltaWare.SDK.Correlation.Context;
 using DeltaWare.SDK.Correlation.Context.Accessors;
+using DeltaWare.SDK.Correlation.Context.Scope;
 using DeltaWare.SDK.Correlation.Forwarder;
 using DeltaWare.SDK.Correlation.Options;
 using DeltaWare.SDK.Correlation.Providers;
@@ -9,11 +10,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Http;
 using System.Linq;
-using DeltaWare.SDK.Correlation.Context.Scope;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
 {
-    internal class TraceOptionsBuilder : TraceOptions, ITraceOptionsBuilder
+    internal sealed class TraceOptionsBuilder : TraceOptions, ITraceOptionsBuilder
     {
         public IServiceCollection Services { get; }
 
