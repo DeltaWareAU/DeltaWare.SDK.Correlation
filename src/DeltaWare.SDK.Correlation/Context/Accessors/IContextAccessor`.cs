@@ -7,7 +7,7 @@ namespace DeltaWare.SDK.Correlation.Context.Accessors
     /// Used to access the specified Context.
     /// </summary>
     /// <typeparam name="TContext">The Context <see cref="Type"/>.</typeparam>
-    public interface IContextAccessor<out TContext>
+    public interface IContextAccessor<out TContext> where TContext : class
     {
         /// <summary>
         /// The current Context.

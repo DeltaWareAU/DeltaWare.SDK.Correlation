@@ -4,7 +4,7 @@ using System.Threading;
 namespace DeltaWare.SDK.Correlation.Context.Accessors
 {
     /// <inheritdoc cref="IContextAccessor{TContext}"/>
-    public class ContextAccessor<TContext> : IContextAccessor<TContext>
+    public class ContextScopeSetter<TContext> : IContextAccessor<TContext> where TContext : class
     {
         private static readonly AsyncLocal<IContextScope<TContext>> _internalScope = new AsyncLocal<IContextScope<TContext>>();
 

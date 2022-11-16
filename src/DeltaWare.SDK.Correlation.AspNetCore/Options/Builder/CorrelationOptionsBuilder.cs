@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Http;
 using System.Linq;
-using Microsoft.Extensions.Configuration;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
 {
@@ -21,7 +20,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
         {
             Services = services;
         }
-        
+
         public void Build()
         {
             Services.AddHttpContextAccessor();
@@ -29,8 +28,8 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
             Services.TryAddScoped<IAspNetContextScope<CorrelationContext>, AspNetCorrelationContextScope>();
 
             Services.TryAddSingleton<IIdForwarder<CorrelationContext>, DefaultCorrelationIdForwarder>();
-            Services.TryAddSingleton<ContextAccessor<CorrelationContext>>();
-            Services.TryAddSingleton<IContextAccessor<CorrelationContext>>(p => p.GetRequiredService<ContextAccessor<CorrelationContext>>());
+            Services.TryAddSingleton<ContextScopeSetter<CorrelationContext>>();
+            Services.TryAddSingleton<IContextAccessor<CorrelationContext>>(p => p.GetRequiredService<ContextScopeSetter<CorrelationContext>>());
 
             Services.TryAddSingleton<IIdProvider<CorrelationContext>, IdProviderWrapper<CorrelationContext, GuidIdProvider>>();
             Services.TryAddSingleton<IOptions<CorrelationContext>>(this);

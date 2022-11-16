@@ -1,16 +1,5 @@
 ﻿using DeltaWare.SDK.Correlation.AspNetCore.Middleware;
 using DeltaWare.SDK.Correlation.AspNetCore.Options.Builder;
-
-/* Unmerged change from project 'DeltaWare.SDK.Correlation.AspNetCore (net6.0)'
-Before:
-using System;
-using Prospa.SDK.Correlation.AspNetCore.Options;
-using DeltaWare.SDK.Correlation.AspNetCore.Middleware;
-After:
-using DeltaWare.SDK.Correlation.Context;
-using Microsoft.AspNetCore.Builder;
-using Prospa.SDK.Correlation.AspNetCore.Options;
-*/
 using DeltaWare.SDK.Correlation.Context;
 using Microsoft.AspNetCore.Builder;
 using System;

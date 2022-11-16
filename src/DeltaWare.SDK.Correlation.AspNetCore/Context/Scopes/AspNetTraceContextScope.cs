@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 {
-    internal sealed class AspNetTraceContextScope : BaseAspNetContextScope<TraceContext>
+    internal sealed class AspNetTraceContextScope : AspNetContextScope<TraceContext>
     {
         public override TraceContext Context { get; }
 
@@ -17,7 +17,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 
         public override string ContextId => Context.TraceId ?? string.Empty;
 
-        public AspNetTraceContextScope(ContextAccessor<TraceContext> contextAccessor, IOptions<TraceContext> options, IIdProvider<TraceContext> idProvider, IHttpContextAccessor httpContextAccessor, ILogger<AspNetTraceContextScope>? logger = null) : base(contextAccessor, options, idProvider, httpContextAccessor, logger)
+        public AspNetTraceContextScope(ContextScopeSetter<TraceContext> contextScopeSetter, IOptions<TraceContext> options, IIdProvider<TraceContext> idProvider, IHttpContextAccessor httpContextAccessor, ILogger<AspNetTraceContextScope>? logger = null) : base(contextScopeSetter, options, httpContextAccessor, logger)
         {
             if (!TryGetId(out string? traceId))
             {

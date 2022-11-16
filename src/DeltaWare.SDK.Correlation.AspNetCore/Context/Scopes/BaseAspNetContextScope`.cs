@@ -1,6 +1,5 @@
 ﻿using DeltaWare.SDK.Correlation.Context.Accessors;
 using DeltaWare.SDK.Correlation.Options;
-using DeltaWare.SDK.Correlation.Providers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
@@ -9,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 {
-    internal abstract class BaseAspNetContextScope<TContext> : IAspNetContextScope<TContext> where TContext : class
+    internal abstract class AspNetContextScope<TContext> : IAspNetContextScope<TContext> where TContext : class
 
     {
         protected IOptions Options { get; }
@@ -22,10 +21,9 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 
         public abstract string ContextId { get; }
 
-        protected BaseAspNetContextScope(ContextAccessor<TContext> contextAccessor, IOptions<TContext> options,
-            IIdProvider<TContext> idProvider, IHttpContextAccessor httpContextAccessor, ILogger? logger = null)
+        protected AspNetContextScope(ContextScopeSetter<TContext> contextScopeSetter, IOptions<TContext> options, IHttpContextAccessor httpContextAccessor, ILogger? logger = null)
         {
-            contextAccessor.InternalScope = this;
+            contextScopeSetter.InternalScope = this;
 
             Options = options;
             HttpContextAccessor = httpContextAccessor;
@@ -96,7 +94,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
             {
                 Logger?.LogTrace("Header Validation will done as it has been forced.");
             }
-            
+
             if (DidReceiveContextId)
             {
                 OnValidationPassed();

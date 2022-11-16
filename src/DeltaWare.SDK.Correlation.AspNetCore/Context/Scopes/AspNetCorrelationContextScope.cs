@@ -9,13 +9,13 @@ using Microsoft.Extensions.Logging;
 
 namespace DeltaWare.SDK.Correlation.AspNetCore.Context.Scopes
 {
-    internal sealed class AspNetCorrelationContextScope : BaseAspNetContextScope<CorrelationContext>
+    internal sealed class AspNetCorrelationContextScope : AspNetContextScope<CorrelationContext>
     {
         public override CorrelationContext Context { get; }
         public override bool DidReceiveContextId { get; }
         public override string ContextId => Context.CorrelationId;
 
-        public AspNetCorrelationContextScope(ContextAccessor<CorrelationContext> contextAccessor, IOptions<CorrelationContext> options, IIdProvider<CorrelationContext> idProvider, IHttpContextAccessor httpContextAccessor, ILogger? logger = null) : base(contextAccessor, options, idProvider, httpContextAccessor, logger)
+        public AspNetCorrelationContextScope(ContextScopeSetter<CorrelationContext> contextScopeSetter, IOptions<CorrelationContext> options, IIdProvider<CorrelationContext> idProvider, IHttpContextAccessor httpContextAccessor, ILogger? logger = null) : base(contextScopeSetter, options, httpContextAccessor, logger)
         {
             if (!TryGetId(out string? correlationId))
             {
