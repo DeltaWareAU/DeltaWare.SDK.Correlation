@@ -34,21 +34,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
             Services.TryAddSingleton<IIdProvider<TraceContext>, IdProviderWrapper<TraceContext, GuidIdProvider>>();
             Services.TryAddSingleton<IOptions<TraceContext>>(this);
 
-            TryAddHandler(Services);
-        }
-
-        private static void TryAddHandler(IServiceCollection services)
-        {
-            if (services.Any(x => x.ServiceType == typeof(IdForwardingHandler<TraceContext>)))
-            {
-                return;
-            }
-
-            services.AddSingleton<IdForwardingHandler<TraceContext>>();
-            services.Configure<HttpMessageHandlerBuilder>(c =>
-            {
-                c.AdditionalHandlers.Add(c.Services.GetRequiredService<IdForwardingHandler<TraceContext>>());
-            });
+            Services.TryAddSingleton<IdForwardingHandler<TraceContext>>();
         }
     }
 }

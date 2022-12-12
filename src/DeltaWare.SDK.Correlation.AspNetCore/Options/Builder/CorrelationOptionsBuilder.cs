@@ -36,21 +36,7 @@ namespace DeltaWare.SDK.Correlation.AspNetCore.Options.Builder
             Services.TryAddSingleton<IIdProvider<CorrelationContext>, IdProviderWrapper<CorrelationContext, GuidIdProvider>>();
             Services.TryAddSingleton<IOptions<CorrelationContext>>(this);
 
-            TryAddHandler(Services);
-        }
-
-        private static void TryAddHandler(IServiceCollection services)
-        {
-            if (services.Any(x => x.ServiceType == typeof(IdForwardingHandler<CorrelationContext>)))
-            {
-                return;
-            }
-
-            services.AddSingleton<IdForwardingHandler<CorrelationContext>>();
-            services.Configure<HttpMessageHandlerBuilder>(c =>
-            {
-                c.AdditionalHandlers.Add(c.Services.GetRequiredService<IdForwardingHandler<CorrelationContext>>());
-            });
+            Services.TryAddSingleton<IdForwardingHandler<CorrelationContext>>();
         }
     }
 }

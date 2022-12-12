@@ -25,13 +25,20 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Adds the Correlation Middleware to AspNet.
+        /// Registers the necessary dependencies to the <see cref="IServiceCollection"/> to enable Tracing.
         /// </summary>
-        public static IApplicationBuilder UseCorrelation(this IApplicationBuilder app)
+        /// <param name="optionsBuilder">Configures Tracing.</param>
+        public static IServiceCollection AddTracing(this IServiceCollection services, Action<IOptionsBuilder>? optionsBuilder = null)
         {
-            app.UseMiddleware<ContextMiddleware<CorrelationContext>>();
+            services.AddHttpContextAccessor();
 
-            return app;
+            TraceOptionsBuilder builder = new TraceOptionsBuilder(services);
+
+            optionsBuilder?.Invoke(builder);
+
+            builder.Build();
+
+            return services;
         }
     }
 }
