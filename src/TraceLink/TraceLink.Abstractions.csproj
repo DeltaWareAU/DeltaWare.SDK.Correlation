@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+      <TargetFrameworks>netstandard2.1;net5.0;net6.0;net7.0</TargetFrameworks>
+      <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+      <Version>7.0.0.1</Version>
+    <Nullable>enable</Nullable>
+      <Author>Bradley Clarke</Author>
+      <Company>DeltaWare</Company>
+      <Product>TraceLink</Product>
+      <Description>Adds core definitions for Correlation and Tracing ID</Description>
+      <PackageProjectUrl>https://github.com/DeltaWareAU/TraceLink</PackageProjectUrl>
+      <PackageReadmeFile>README.md</PackageReadmeFile>
+      <RepositoryUrl>https://github.com/DeltaWareAU/TraceLink</RepositoryUrl>
+      <RepositoryType>git</RepositoryType>
+      <PackageTags>Correlation;Tracing;Id;CorrelationId;TracingId</PackageTags>
+      <NeutralLanguage>en</NeutralLanguage>
+      <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+      <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+      <IncludeSymbols>true</IncludeSymbols>
+      <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+      <PackageOutputPath>..\..\nuget.packages</PackageOutputPath>
+	  <PackageIcon>nuget_logo.png</PackageIcon>
+	  <PackageReleaseNotes>* Added Support for NetStandard2.1</PackageReleaseNotes>
+	  <Copyright>Copyright (c) 2022 Bradley Clarke</Copyright>
+  </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\..\nuget_logo.png" pack="true" PackagePath="." />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\..\README.md" pack="true" PackagePath="." />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\..\LICENSE.md" pack="true" PackagePath="." />
+    </ItemGroup>
+
+</Project>
