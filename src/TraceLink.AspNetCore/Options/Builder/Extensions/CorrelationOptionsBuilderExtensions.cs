@@ -3,10 +3,9 @@ using System;
 using TraceLink.Abstractions.Context;
 using TraceLink.Abstractions.Forwarder;
 using TraceLink.Abstractions.Providers;
-using TraceLink.AspNetCore.Options.Builder;
 
 // ReSharper disable once CheckNamespace
-namespace Prospa.SDK.Correlation.AspNetCore.Options.Builder
+namespace TraceLink.AspNetCore.Options.Builder
 {
     public static partial class CorrelationOptionsBuilderExtensions
     {

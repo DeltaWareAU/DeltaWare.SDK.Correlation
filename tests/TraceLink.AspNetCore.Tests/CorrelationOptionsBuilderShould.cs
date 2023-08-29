@@ -13,7 +13,7 @@ namespace TraceLink.AspNetCore.Tests
 
             //optionsBuilder.Build();
 
-            //mockServiceCollection.Verify(s => s.Add(ServiceDescriptor.Scoped(typeof(AspNetCorrelationContextScope), typeof(AspNetCorrelationContextScope))), Times.Exactly(1));
+            //mockServiceCollection.Verify(s => s.Add(ServiceDescriptor.Scoped(typeof(AspNetTracingCorrelationScope), typeof(AspNetTracingCorrelationScope))), Times.Exactly(1));
         }
     }
 }

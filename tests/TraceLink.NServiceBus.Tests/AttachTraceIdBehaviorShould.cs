@@ -26,7 +26,7 @@ namespace TraceLink.NServiceBus.Tests
                 .Setup(m => m.GetForwardingId())
                 .Returns(traceId);
 
-            Mock<IOptions<TraceContext>> mockOptions = new Mock<IOptions<TraceContext>>();
+            Mock<ITracingOptions<TraceContext>> mockOptions = new Mock<ITracingOptions<TraceContext>>();
 
             mockOptions
                 .Setup(p => p.Key)
@@ -55,7 +55,7 @@ namespace TraceLink.NServiceBus.Tests
 
             mockIdForwarder.Setup(m => m.GetForwardingId()).Returns(traceId);
 
-            Mock<IOptions<TraceContext>> mockOptions = new Mock<IOptions<TraceContext>>();
+            Mock<ITracingOptions<TraceContext>> mockOptions = new Mock<ITracingOptions<TraceContext>>();
 
             mockOptions.Setup(p => p.Key).Returns(key);
 

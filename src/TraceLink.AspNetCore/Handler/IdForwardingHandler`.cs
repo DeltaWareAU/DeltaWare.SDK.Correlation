@@ -2,18 +2,19 @@
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using TraceLink.Abstractions.Context;
 using TraceLink.Abstractions.Forwarder;
 using TraceLink.Abstractions.Options;
 
 namespace TraceLink.AspNetCore.Handler
 {
-    internal sealed class IdForwardingHandler<TContext> : DelegatingHandler where TContext : class
+    internal sealed class IdForwardingHandler<TTracingContext> : DelegatingHandler where TTracingContext : ITracingContext
     {
-        private readonly IOptions _options;
+        private readonly ITracingOptions _options;
 
         private readonly IIdForwarder _idForwarder;
 
-        public IdForwardingHandler(IOptions<TContext> options, IIdForwarder<TContext> idForwarder)
+        public IdForwardingHandler(ITracingOptions<TTracingContext> options, IIdForwarder<TTracingContext> idForwarder)
         {
             _options = options;
             _idForwarder = idForwarder;

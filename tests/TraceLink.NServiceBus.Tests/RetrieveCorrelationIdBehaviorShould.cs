@@ -22,15 +22,15 @@ namespace TraceLink.NServiceBus.Tests
             string correlationId = Guid.NewGuid().ToString();
             string key = "my-test-key";
 
-            MockContextScope<CorrelationContext> contextScope = new MockContextScope<CorrelationContext>();
+            MockTracingTracingScope<CorrelationContext> tracingTracingScope = new MockTracingTracingScope<CorrelationContext>();
 
             Mock<IIdProvider<CorrelationContext>> mockIdProvider = new Mock<IIdProvider<CorrelationContext>>();
-            Mock<IOptions<CorrelationContext>> mockOptions = new Mock<IOptions<CorrelationContext>>();
+            Mock<ITracingOptions<CorrelationContext>> mockOptions = new Mock<ITracingOptions<CorrelationContext>>();
 
             mockOptions.Setup(p => p.Key).Returns(key);
             mockOptions.Setup(p => p.IsRequired).Returns(true);
 
-            RetrieveContextIdBehavior<CorrelationContext> behavior = new RetrieveCorrelationIdBehavior(contextScope, mockIdProvider.Object, mockOptions.Object);
+            RetrieveContextIdBehavior<CorrelationContext> behavior = new RetrieveCorrelationIdBehavior(tracingTracingScope, mockIdProvider.Object, mockOptions.Object);
 
             TestableIncomingPhysicalMessageContext context = new TestableIncomingPhysicalMessageContext
             {
@@ -42,7 +42,7 @@ namespace TraceLink.NServiceBus.Tests
 
             await behavior.Invoke(context, () => Task.CompletedTask);
 
-            contextScope.Context.CorrelationId.ShouldBe(correlationId);
+            tracingTracingScope.Context.Id.ShouldBe(correlationId);
 
             mockIdProvider.Verify(m => m.GenerateId(), Times.Never);
         }
@@ -53,23 +53,23 @@ namespace TraceLink.NServiceBus.Tests
             string correlationId = Guid.NewGuid().ToString();
             string key = "my-test-key";
 
-            MockContextScope<CorrelationContext> contextScope = new MockContextScope<CorrelationContext>();
+            MockTracingTracingScope<CorrelationContext> tracingTracingScope = new MockTracingTracingScope<CorrelationContext>();
 
             Mock<IIdProvider<CorrelationContext>> mockIdProvider = new Mock<IIdProvider<CorrelationContext>>();
-            Mock<IOptions<CorrelationContext>> mockOptions = new Mock<IOptions<CorrelationContext>>();
+            Mock<ITracingOptions<CorrelationContext>> mockOptions = new Mock<ITracingOptions<CorrelationContext>>();
 
             mockIdProvider.Setup(m => m.GenerateId()).Returns(correlationId);
 
             mockOptions.Setup(p => p.Key).Returns(key);
             mockOptions.Setup(p => p.IsRequired).Returns(false);
 
-            RetrieveContextIdBehavior<CorrelationContext> behavior = new RetrieveCorrelationIdBehavior(contextScope, mockIdProvider.Object, mockOptions.Object);
+            RetrieveContextIdBehavior<CorrelationContext> behavior = new RetrieveCorrelationIdBehavior(tracingTracingScope, mockIdProvider.Object, mockOptions.Object);
 
             TestableIncomingPhysicalMessageContext context = new TestableIncomingPhysicalMessageContext();
 
             await behavior.Invoke(context, () => Task.CompletedTask);
 
-            contextScope.Context.CorrelationId.ShouldBe(correlationId);
+            tracingTracingScope.Context.Id.ShouldBe(correlationId);
 
             mockIdProvider.Verify(m => m.GenerateId(), Times.Once);
         }
@@ -81,10 +81,10 @@ namespace TraceLink.NServiceBus.Tests
             string key = "my-test-key";
             string loggingScopeKey = "my-test-logging-scope-key";
 
-            MockContextScope<CorrelationContext> contextScope = new MockContextScope<CorrelationContext>();
+            MockTracingTracingScope<CorrelationContext> tracingTracingScope = new MockTracingTracingScope<CorrelationContext>();
 
             Mock<IIdProvider<CorrelationContext>> mockIdProvider = new Mock<IIdProvider<CorrelationContext>>();
-            Mock<IOptions<CorrelationContext>> mockOptions = new Mock<IOptions<CorrelationContext>>();
+            Mock<ITracingOptions<CorrelationContext>> mockOptions = new Mock<ITracingOptions<CorrelationContext>>();
             Mock<ILogger<CorrelationContext>> mockLogger = new Mock<ILogger<CorrelationContext>>();
 
             mockOptions.Setup(p => p.Key).Returns(key);
@@ -95,7 +95,7 @@ namespace TraceLink.NServiceBus.Tests
             mockLogger.Setup(m => m.BeginScope(It.IsAny<Dictionary<string, string>>())).Returns(new MockDisposable());
 
 
-            RetrieveContextIdBehavior<CorrelationContext> behavior = new RetrieveCorrelationIdBehavior(contextScope, mockIdProvider.Object, mockOptions.Object, mockLogger.Object);
+            RetrieveContextIdBehavior<CorrelationContext> behavior = new RetrieveCorrelationIdBehavior(tracingTracingScope, mockIdProvider.Object, mockOptions.Object, mockLogger.Object);
 
             TestableIncomingPhysicalMessageContext context = new TestableIncomingPhysicalMessageContext
             {
@@ -107,7 +107,7 @@ namespace TraceLink.NServiceBus.Tests
 
             await behavior.Invoke(context, () => Task.CompletedTask);
 
-            contextScope.Context.CorrelationId.ShouldBe(correlationId);
+            tracingTracingScope.Context.Id.ShouldBe(correlationId);
 
             mockIdProvider.Verify(m => m.GenerateId(), Times.Never);
             mockLogger.Verify(m => m.BeginScope(It.IsAny<Dictionary<string, string>>()), Times.Once);

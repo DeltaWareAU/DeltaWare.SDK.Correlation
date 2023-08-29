@@ -43,7 +43,7 @@ namespace TraceLink.AspNetCore.Tests
             using var server = new TestServer(builder);
 
             var traceIdProvider = server.Services.GetRequiredService<IIdProvider<TraceContext>>();
-            var options = server.Services.GetRequiredService<IOptions<TraceContext>>();
+            var options = server.Services.GetRequiredService<ITracingOptions<TraceContext>>();
 
             using var client = server.CreateClient();
 
@@ -79,7 +79,7 @@ namespace TraceLink.AspNetCore.Tests
             using var server = new TestServer(builder);
 
             var traceId = server.Services.GetRequiredService<IIdProvider<TraceContext>>().GenerateId();
-            var options = server.Services.GetRequiredService<IOptions<TraceContext>>();
+            var options = server.Services.GetRequiredService<ITracingOptions<TraceContext>>();
 
             var request = new HttpRequestMessage();
             request.Headers.Add(options.Key, traceId);
@@ -109,7 +109,7 @@ namespace TraceLink.AspNetCore.Tests
             using var server = new TestServer(builder);
 
             var traceId = server.Services.GetRequiredService<IIdProvider<TraceContext>>().GenerateId();
-            var options = server.Services.GetRequiredService<IOptions<TraceContext>>();
+            var options = server.Services.GetRequiredService<ITracingOptions<TraceContext>>();
 
             var request = new HttpRequestMessage();
             request.Headers.Add(options.Key, traceId);
@@ -134,7 +134,7 @@ namespace TraceLink.AspNetCore.Tests
 
             ServiceProvider serviceProvider = services.BuildServiceProvider();
 
-            string headerKey = serviceProvider.GetRequiredService<IOptions<TraceContext>>().Key;
+            string headerKey = serviceProvider.GetRequiredService<ITracingOptions<TraceContext>>().Key;
             string traceId = serviceProvider.GetRequiredService<IIdProvider<TraceContext>>().GenerateId();
             IHttpContextAccessor httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
 
@@ -142,7 +142,7 @@ namespace TraceLink.AspNetCore.Tests
             httpContextAccessor.HttpContext.Request.Headers.Add(headerKey, traceId);
 
             serviceProvider
-                .GetRequiredService<IAspNetContextScope<TraceContext>>()
+                .GetRequiredService<IAspNetTracingScope<TraceContext>>()
                 .TrySetId(true);
 
             serviceProvider

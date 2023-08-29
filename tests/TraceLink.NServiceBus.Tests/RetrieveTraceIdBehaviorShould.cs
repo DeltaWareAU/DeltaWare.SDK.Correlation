@@ -21,14 +21,14 @@ namespace TraceLink.NServiceBus.Tests
             string traceId = Guid.NewGuid().ToString();
             string key = "my-test-key";
 
-            MockContextScope<TraceContext> contextScope = new MockContextScope<TraceContext>();
+            MockTracingTracingScope<TraceContext> tracingTracingScope = new MockTracingTracingScope<TraceContext>();
 
-            Mock<IOptions<TraceContext>> mockOptions = new Mock<IOptions<TraceContext>>();
+            Mock<ITracingOptions<TraceContext>> mockOptions = new Mock<ITracingOptions<TraceContext>>();
 
             mockOptions.Setup(p => p.Key).Returns(key);
             mockOptions.Setup(p => p.IsRequired).Returns(true);
 
-            RetrieveContextIdBehavior<TraceContext> behavior = new RetrieveTraceIdBehavior(contextScope, mockOptions.Object);
+            RetrieveContextIdBehavior<TraceContext> behavior = new RetrieveTraceIdBehavior(tracingTracingScope, mockOptions.Object);
 
             TestableIncomingPhysicalMessageContext context = new TestableIncomingPhysicalMessageContext
             {
@@ -40,7 +40,7 @@ namespace TraceLink.NServiceBus.Tests
 
             await behavior.Invoke(context, () => Task.CompletedTask);
 
-            contextScope.Context.TraceId.ShouldBe(traceId);
+            tracingTracingScope.Context.Id.ShouldBe(traceId);
         }
 
         [Fact]
@@ -48,20 +48,20 @@ namespace TraceLink.NServiceBus.Tests
         {
             string key = "my-test-key";
 
-            MockContextScope<TraceContext> contextScope = new MockContextScope<TraceContext>();
+            MockTracingTracingScope<TraceContext> tracingTracingScope = new MockTracingTracingScope<TraceContext>();
 
-            Mock<IOptions<TraceContext>> mockOptions = new Mock<IOptions<TraceContext>>();
+            Mock<ITracingOptions<TraceContext>> mockOptions = new Mock<ITracingOptions<TraceContext>>();
 
             mockOptions.Setup(p => p.Key).Returns(key);
             mockOptions.Setup(p => p.IsRequired).Returns(false);
 
-            RetrieveContextIdBehavior<TraceContext> behavior = new RetrieveTraceIdBehavior(contextScope, mockOptions.Object);
+            RetrieveContextIdBehavior<TraceContext> behavior = new RetrieveTraceIdBehavior(tracingTracingScope, mockOptions.Object);
 
             TestableIncomingPhysicalMessageContext context = new TestableIncomingPhysicalMessageContext();
 
             await behavior.Invoke(context, () => Task.CompletedTask);
 
-            contextScope.Context.HasId.ShouldBeFalse();
+            tracingTracingScope.Context.ShouldBeNull();
         }
 
         [Fact]
@@ -71,9 +71,9 @@ namespace TraceLink.NServiceBus.Tests
             string key = "my-test-key";
             string loggingScopeKey = "my-test-logging-scope-key";
 
-            MockContextScope<TraceContext> contextScope = new MockContextScope<TraceContext>();
+            MockTracingTracingScope<TraceContext> tracingTracingScope = new MockTracingTracingScope<TraceContext>();
 
-            Mock<IOptions<TraceContext>> mockOptions = new Mock<IOptions<TraceContext>>();
+            Mock<ITracingOptions<TraceContext>> mockOptions = new Mock<ITracingOptions<TraceContext>>();
             Mock<ILogger<TraceContext>> mockLogger = new Mock<ILogger<TraceContext>>();
 
             mockOptions.Setup(p => p.Key).Returns(key);
@@ -83,7 +83,7 @@ namespace TraceLink.NServiceBus.Tests
 
             mockLogger.Setup(m => m.BeginScope(It.IsAny<Dictionary<string, string>>())).Returns(new MockDisposable());
 
-            RetrieveContextIdBehavior<TraceContext> behavior = new RetrieveTraceIdBehavior(contextScope, mockOptions.Object, mockLogger.Object);
+            RetrieveContextIdBehavior<TraceContext> behavior = new RetrieveTraceIdBehavior(tracingTracingScope, mockOptions.Object, mockLogger.Object);
 
             TestableIncomingPhysicalMessageContext context = new TestableIncomingPhysicalMessageContext
             {
@@ -95,7 +95,7 @@ namespace TraceLink.NServiceBus.Tests
 
             await behavior.Invoke(context, () => Task.CompletedTask);
 
-            contextScope.Context.TraceId.ShouldBe(traceId);
+            tracingTracingScope.Context.Id.ShouldBe(traceId);
 
             mockLogger.Verify(m => m.BeginScope(It.IsAny<Dictionary<string, string>>()), Times.Once);
             mockLogger.Verify(m => m.BeginScope(It.Is<Dictionary<string, string>>(v => v.ContainsKey(loggingScopeKey) && v[loggingScopeKey] == traceId)), Times.Once);

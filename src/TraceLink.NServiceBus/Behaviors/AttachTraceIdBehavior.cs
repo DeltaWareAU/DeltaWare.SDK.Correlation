@@ -7,7 +7,7 @@ namespace TraceLink.NServiceBus.Behaviors
 {
     internal sealed class AttachTraceIdBehavior : AttachContextIdBehavior
     {
-        public AttachTraceIdBehavior(IIdForwarder<TraceContext> idForwarder, IOptions<TraceContext> options) : base(idForwarder, options)
+        public AttachTraceIdBehavior(IIdForwarder<TraceContext> idForwarder, ITracingOptions<TraceContext> options) : base(idForwarder, options)
         {
         }
 
