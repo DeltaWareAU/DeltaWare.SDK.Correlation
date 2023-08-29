@@ -4,18 +4,19 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using TraceLink.Abstractions.Context;
 using TraceLink.Abstractions.Options;
 using TraceLink.NServiceBus.Context.Scopes;
 
 [assembly: InternalsVisibleTo("TraceLink.NServiceBus.Tests")]
 namespace TraceLink.NServiceBus.Behaviors
 {
-    internal abstract class RetrieveContextIdBehavior<TContext> : Behavior<IIncomingPhysicalMessageContext> where TContext : class
+    internal abstract class RetrieveContextIdBehavior<TTracingContext> : Behavior<IIncomingPhysicalMessageContext> where TTracingContext : ITracingContext
     {
-        private readonly IOptions _options;
+        private readonly ITracingOptions _options;
         private readonly ILogger? _logger;
 
-        protected RetrieveContextIdBehavior(IOptions options, ILogger? logger)
+        protected RetrieveContextIdBehavior(ITracingOptions options, ILogger? logger)
         {
             _options = options;
             _logger = logger;
@@ -23,9 +24,9 @@ namespace TraceLink.NServiceBus.Behaviors
 
         public override async Task Invoke(IIncomingPhysicalMessageContext context, Func<Task> next)
         {
-            NServiceBusContextScope<TContext> contextScope = CreateContextScope(context);
+            NServiceBusTracingScope<TTracingContext> tracingScope = CreateContextScope(context);
 
-            if (!contextScope.ValidateHeader())
+            if (!tracingScope.ValidateHeader())
             {
                 throw new ArgumentException($"{_options.Key} was not Attached to the Headers of the Incoming Message.");
             }
@@ -39,7 +40,7 @@ namespace TraceLink.NServiceBus.Behaviors
 
             Dictionary<string, string> state = new Dictionary<string, string>
             {
-                [_options.LoggingScopeKey] = contextScope.ContextId
+                [_options.LoggingScopeKey] = tracingScope.Id
             };
 
             using (_logger.BeginScope(state))
@@ -48,6 +49,6 @@ namespace TraceLink.NServiceBus.Behaviors
             }
         }
 
-        protected abstract NServiceBusContextScope<TContext> CreateContextScope(IIncomingPhysicalMessageContext context);
+        protected abstract NServiceBusTracingScope<TTracingContext> CreateContextScope(IIncomingPhysicalMessageContext context);
     }
 }

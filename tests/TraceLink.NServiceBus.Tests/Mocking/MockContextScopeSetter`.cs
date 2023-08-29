@@ -1,20 +1,21 @@
-﻿using TraceLink.Abstractions.Context.Accessors;
+﻿using TraceLink.Abstractions.Context;
+using TraceLink.Abstractions.Context.Accessors;
 using TraceLink.Abstractions.Context.Scope;
 
 namespace TraceLink.NServiceBus.Tests.Mocking
 {
-    /// <inheritdoc cref="IContextAccessor{TContext}"/>
-    public class MockContextScope<TContext> : IContextAccessor<TContext>, IContextScopeSetter<TContext> where TContext : class
+    /// <inheritdoc cref="ITracingContextAccessor{TContext}"/>
+    public class MockTracingTracingScope<TTracingContext> : ITracingContextAccessor<TTracingContext>, ITracingScopeSetter<TTracingContext> where TTracingContext : ITracingContext
     {
-        private IContextScope<TContext>? _internalScope = null;
+        private ITracingScope<TTracingContext>? _internalScope = null;
 
         /// <inheritdoc/>
-        public IContextScope Scope => _internalScope;
+        public ITracingScope Scope => _internalScope;
 
         /// <inheritdoc/>
-        public TContext Context => _internalScope.Context;
+        public TTracingContext Context => _internalScope.Context;
 
-        public void SetScope(IContextScope<TContext> contextScope)
-            => _internalScope = contextScope;
+        public void SetScope(ITracingScope<TTracingContext> tracingScope)
+            => _internalScope = tracingScope;
     }
 }

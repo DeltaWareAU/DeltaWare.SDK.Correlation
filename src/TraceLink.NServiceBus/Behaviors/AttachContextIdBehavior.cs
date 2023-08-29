@@ -12,9 +12,9 @@ namespace TraceLink.NServiceBus.Behaviors
     {
         private readonly IIdForwarder _idForwarder;
 
-        private readonly IOptions _options;
+        private readonly ITracingOptions _options;
 
-        protected AttachContextIdBehavior(IIdForwarder idForwarder, IOptions options)
+        protected AttachContextIdBehavior(IIdForwarder idForwarder, ITracingOptions options)
         {
             _idForwarder = idForwarder;
             _options = options;

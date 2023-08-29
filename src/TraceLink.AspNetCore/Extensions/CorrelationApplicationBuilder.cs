@@ -11,7 +11,7 @@ namespace Microsoft.AspNetCore.Builder
         /// </summary>
         public static IApplicationBuilder UseCorrelation(this IApplicationBuilder app)
         {
-            app.UseMiddleware<ContextMiddleware<CorrelationContext>>();
+            app.UseMiddleware<TracingContextMiddleware<CorrelationContext>>();
 
             return app;
         }
@@ -21,7 +21,7 @@ namespace Microsoft.AspNetCore.Builder
         /// </summary>
         public static IApplicationBuilder UseTracing(this IApplicationBuilder app)
         {
-            app.UseMiddleware<ContextMiddleware<TraceContext>>();
+            app.UseMiddleware<TracingContextMiddleware<TraceContext>>();
 
             return app;
         }

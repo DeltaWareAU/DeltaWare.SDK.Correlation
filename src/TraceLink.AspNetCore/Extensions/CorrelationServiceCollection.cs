@@ -1,37 +1,4 @@
-﻿
-/* Unmerged change from project 'TraceLink.AspNetCore (netstandard2.1)'
-Before:
-using TraceLink.AspNetCore.Middleware;
-using TraceLink.AspNetCore.Options.Builder;
-using Microsoft.AspNetCore.Builder;
-After:
-using Microsoft.AspNetCore.Builder;
-using TraceLink.AspNetCore.Middleware;
-using TraceLink.AspNetCore.Options.Builder;
-*/
-
-/* Unmerged change from project 'TraceLink.AspNetCore (net5.0)'
-Before:
-using TraceLink.AspNetCore.Middleware;
-using TraceLink.AspNetCore.Options.Builder;
-using Microsoft.AspNetCore.Builder;
-After:
-using Microsoft.AspNetCore.Builder;
-using TraceLink.AspNetCore.Middleware;
-using TraceLink.AspNetCore.Options.Builder;
-*/
-
-/* Unmerged change from project 'TraceLink.AspNetCore (net6.0)'
-Before:
-using TraceLink.AspNetCore.Middleware;
-using TraceLink.AspNetCore.Options.Builder;
-using Microsoft.AspNetCore.Builder;
-After:
-using Microsoft.AspNetCore.Builder;
-using TraceLink.AspNetCore.Middleware;
-using TraceLink.AspNetCore.Options.Builder;
-*/
-using System;
+﻿using System;
 using TraceLink.AspNetCore.Options.Builder;
 
 // ReSharper disable once CheckNamespace

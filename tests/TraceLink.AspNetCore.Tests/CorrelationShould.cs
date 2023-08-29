@@ -43,7 +43,7 @@ namespace TraceLink.AspNetCore.Tests
             using var server = new TestServer(builder);
 
             var correlationIdProvider = server.Services.GetRequiredService<IIdProvider<CorrelationContext>>();
-            var options = server.Services.GetRequiredService<IOptions<CorrelationContext>>();
+            var options = server.Services.GetRequiredService<ITracingOptions<CorrelationContext>>();
 
             using var client = server.CreateClient();
 
@@ -79,7 +79,7 @@ namespace TraceLink.AspNetCore.Tests
             using var server = new TestServer(builder);
 
             var correlationId = server.Services.GetRequiredService<IIdProvider<CorrelationContext>>().GenerateId();
-            var options = server.Services.GetRequiredService<IOptions<CorrelationContext>>();
+            var options = server.Services.GetRequiredService<ITracingOptions<CorrelationContext>>();
 
             var request = new HttpRequestMessage();
             request.Headers.Add(options.Key, correlationId);
@@ -109,7 +109,7 @@ namespace TraceLink.AspNetCore.Tests
             using var server = new TestServer(builder);
 
             var correlationId = server.Services.GetRequiredService<IIdProvider<CorrelationContext>>().GenerateId();
-            var options = server.Services.GetRequiredService<IOptions<CorrelationContext>>();
+            var options = server.Services.GetRequiredService<ITracingOptions<CorrelationContext>>();
 
             var request = new HttpRequestMessage();
             request.Headers.Add(options.Key, correlationId);
@@ -125,8 +125,6 @@ namespace TraceLink.AspNetCore.Tests
             response.StatusCode.ShouldNotBe(HttpStatusCode.BadRequest);
         }
 
-
-
         [Fact]
         public void GetForwardingId()
         {
@@ -136,7 +134,7 @@ namespace TraceLink.AspNetCore.Tests
 
             ServiceProvider serviceProvider = services.BuildServiceProvider();
 
-            string headerKey = serviceProvider.GetRequiredService<IOptions<CorrelationContext>>().Key;
+            string headerKey = serviceProvider.GetRequiredService<ITracingOptions<CorrelationContext>>().Key;
             string correlationId = serviceProvider.GetRequiredService<IIdProvider<CorrelationContext>>().GenerateId();
             IHttpContextAccessor httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
 
@@ -144,7 +142,7 @@ namespace TraceLink.AspNetCore.Tests
             httpContextAccessor.HttpContext.Request.Headers.Add(headerKey, correlationId);
 
             serviceProvider
-                .GetRequiredService<IAspNetContextScope<CorrelationContext>>()
+                .GetRequiredService<IAspNetTracingScope<CorrelationContext>>()
                 .TrySetId(true);
 
             serviceProvider

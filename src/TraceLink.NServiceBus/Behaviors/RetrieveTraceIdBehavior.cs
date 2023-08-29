@@ -9,21 +9,21 @@ namespace TraceLink.NServiceBus.Behaviors
 {
     internal sealed class RetrieveTraceIdBehavior : RetrieveContextIdBehavior<TraceContext>
     {
-        private readonly IContextScopeSetter<TraceContext> _scopeSetter;
+        private readonly ITracingScopeSetter<TraceContext> _scopeSetter;
 
-        private readonly IOptions<TraceContext> _options;
+        private readonly ITracingOptions<TraceContext> _options;
 
         private readonly ILogger? _logger;
 
-        public RetrieveTraceIdBehavior(IContextScopeSetter<TraceContext> scopeSetter, IOptions<TraceContext> options, ILogger<TraceContext>? logger = null) : base(options, logger)
+        public RetrieveTraceIdBehavior(ITracingScopeSetter<TraceContext> scopeSetter, ITracingOptions<TraceContext> options, ILogger<TraceContext>? logger = null) : base(options, logger)
         {
             _scopeSetter = scopeSetter;
             _options = options;
             _logger = logger;
         }
 
-        protected override NServiceBusContextScope<TraceContext> CreateContextScope(IIncomingPhysicalMessageContext context)
-            => new TraceNServiceBusContextScope(_scopeSetter, _options, context, _logger);
+        protected override NServiceBusTracingScope<TraceContext> CreateContextScope(IIncomingPhysicalMessageContext context)
+            => new TraceNServiceBusTracingScope(_scopeSetter, _options, context, _logger);
 
         internal sealed class Register : RegisterStep
         {
