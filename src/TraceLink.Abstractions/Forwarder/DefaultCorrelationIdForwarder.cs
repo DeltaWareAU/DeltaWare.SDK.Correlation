@@ -1,15 +1,17 @@
 ﻿using TraceLink.Abstractions.Context;
 using TraceLink.Abstractions.Context.Accessors;
-using TraceLink.Abstractions.Providers;
 
 namespace TraceLink.Abstractions.Forwarder
 {
-    public sealed class DefaultCorrelationIdForwarder : IdForwarder<CorrelationContext>
+    public sealed class DefaultCorrelationIdForwarder : IIdForwarder<CorrelationContext>
     {
-        public DefaultCorrelationIdForwarder(ITracingContextAccessor<CorrelationContext> contextAccessor, IIdProvider<CorrelationContext> idProvider) : base(contextAccessor, idProvider)
+        private readonly ITracingContextAccessor<CorrelationContext> _contextAccessor;
+
+        public DefaultCorrelationIdForwarder(ITracingContextAccessor<CorrelationContext> contextAccessor)
         {
+            _contextAccessor = contextAccessor;
         }
 
-        public override string GetForwardingId() => TracingContextAccessor.Context.Id;
+        public string GetForwardingId() => _contextAccessor.Context.Id;
     }
 }

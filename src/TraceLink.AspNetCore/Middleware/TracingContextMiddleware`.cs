@@ -30,7 +30,7 @@ namespace TraceLink.AspNetCore.Middleware
                 return;
             }
 
-            tracingScope.TrySetId();
+            tracingScope.SetId();
 
             if (_logger == null || !_options.AttachToLoggingScope)
             {

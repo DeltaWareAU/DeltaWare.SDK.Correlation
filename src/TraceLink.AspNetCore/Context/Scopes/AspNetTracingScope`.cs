@@ -54,10 +54,10 @@ namespace TraceLink.AspNetCore.Context.Scopes
             return true;
         }
 
-        public void TrySetId(bool force = false)
-            => TrySetId(Id);
+        public void SetId(bool force = false)
+            => SetId(Id);
 
-        public void TrySetId(string idValue, bool force = false)
+        public void SetId(string idValue, bool force = false)
         {
             HttpContextAccessor.HttpContext.Response.OnStarting(() =>
             {
@@ -116,11 +116,11 @@ namespace TraceLink.AspNetCore.Context.Scopes
         protected virtual bool ShouldAttachToResponse(HttpContext context)
             => Options.AttachToResponse;
 
+        protected abstract bool CanSkipValidation(HttpContext context);
+
         protected abstract void OnMultipleIdsFounds(string[] foundIds);
 
         protected abstract void OnIdAttached(string id);
-
-        protected abstract bool CanSkipValidation(HttpContext context);
 
         protected abstract void OnValidationPassed();
 

@@ -3,15 +3,18 @@ using TraceLink.Abstractions.Context.Accessors;
 
 namespace TraceLink.Abstractions.Context.Scope
 {
-    /// <inheritdoc cref="ITracingContextAccessor{TContext}"/>
     public sealed class AsyncLocalTracingScope<TTracingContext> : ITracingContextAccessor<TTracingContext>, ITracingScopeSetter<TTracingContext> where TTracingContext : ITracingContext
     {
-        private static readonly AsyncLocal<ITracingScope<TTracingContext>> _internalScope = new AsyncLocal<ITracingScope<TTracingContext>>();
+        private static readonly AsyncLocal<ITracingScope<TTracingContext>> AsyncLocalScope = new AsyncLocal<ITracingScope<TTracingContext>>();
 
         /// <inheritdoc/>
-        public TTracingContext Context => _internalScope.Value!.Context;
+        public TTracingContext Context => AsyncLocalScope.Value!.Context;
 
+        /// <inheritdoc/>
+        public bool ReceivedId => AsyncLocalScope.Value?.ReceivedId ?? false;
+
+        /// <inheritdoc/>
         public void SetScope(ITracingScope<TTracingContext> tracingScope)
-            => _internalScope.Value = tracingScope;
+            => AsyncLocalScope.Value = tracingScope;
     }
 }

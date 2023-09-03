@@ -9,13 +9,13 @@ using TraceLink.AspNetCore.Extensions;
 
 namespace TraceLink.AspNetCore.Context.Scopes
 {
-    internal sealed class AspNetTracingCorrelationScope : AspNetTracingScope<CorrelationContext>
+    internal sealed class AspNetCorrelationScope : AspNetTracingScope<CorrelationContext>
     {
         public override CorrelationContext Context { get; }
         public override bool ReceivedId { get; }
         public override string Id => Context.Id;
 
-        public AspNetTracingCorrelationScope(ITracingScopeSetter<CorrelationContext> tracingScopeSetter, ITracingOptions<CorrelationContext> options, IIdProvider<CorrelationContext> idProvider, IHttpContextAccessor httpContextAccessor, ILogger<CorrelationContext>? logger = null) : base(tracingScopeSetter, options, httpContextAccessor, logger)
+        public AspNetCorrelationScope(ITracingScopeSetter<CorrelationContext> tracingScopeSetter, ITracingOptions<CorrelationContext> options, IIdProvider<CorrelationContext> idProvider, IHttpContextAccessor httpContextAccessor, ILogger<CorrelationContext>? logger = null) : base(tracingScopeSetter, options, httpContextAccessor, logger)
         {
             if (!TryGetId(out string? correlationId))
             {
@@ -36,7 +36,7 @@ namespace TraceLink.AspNetCore.Context.Scopes
 
             if (options.AttachToResponse)
             {
-                TrySetId();
+                SetId();
             }
         }
 
@@ -74,16 +74,6 @@ namespace TraceLink.AspNetCore.Context.Scopes
             return true;
         }
 
-        protected override void OnMultipleIdsFounds(string[] foundIds)
-        {
-            Logger?.LogWarning("Multiple CorrelationIds found ({CorrelationIds}), only the first value will be used.", string.Join(',', foundIds));
-        }
-
-        protected override void OnIdAttached(string id)
-        {
-            Logger?.LogDebug("Correlation ID {CorrelationId} has been attached to the Response Headers", id);
-        }
-
         protected override bool CanSkipValidation(HttpContext context)
         {
             if (!context.Features.HasFeature<CorrelationIdHeaderNotRequiredAttribute>())
@@ -94,6 +84,16 @@ namespace TraceLink.AspNetCore.Context.Scopes
             Logger?.LogTrace("Key Validation will be skipped as the CorrelationIdHeaderNotRequiredAttribute is present.");
 
             return true;
+        }
+
+        protected override void OnMultipleIdsFounds(string[] foundIds)
+        {
+            Logger?.LogWarning("Multiple CorrelationIds found ({CorrelationIds}), only the first value will be used.", string.Join(',', foundIds));
+        }
+
+        protected override void OnIdAttached(string id)
+        {
+            Logger?.LogDebug("Correlation ID {CorrelationId} has been attached to the Response Headers", id);
         }
 
         protected override void OnValidationPassed()

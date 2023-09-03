@@ -22,7 +22,7 @@ namespace TraceLink.AspNetCore.Options.Builder
 
         public void Build()
         {
-            Services.TryAddScoped<IAspNetTracingScope<TraceContext>, AspNetTracingTraceScope>();
+            Services.TryAddScoped<IAspNetTracingScope<TraceContext>, AspNetTraceScope>();
 
             Services.TryAddSingleton<AsyncLocalTracingScope<TraceContext>>();
             Services.TryAddSingleton<ITracingScopeSetter<TraceContext>>(p => p.GetRequiredService<AsyncLocalTracingScope<TraceContext>>());

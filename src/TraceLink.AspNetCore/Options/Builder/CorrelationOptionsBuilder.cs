@@ -24,7 +24,7 @@ namespace TraceLink.AspNetCore.Options.Builder
         {
             Services.AddHttpContextAccessor();
 
-            Services.TryAddScoped<IAspNetTracingScope<CorrelationContext>, AspNetTracingCorrelationScope>();
+            Services.TryAddScoped<IAspNetTracingScope<CorrelationContext>, AspNetCorrelationScope>();
 
             Services.TryAddSingleton<AsyncLocalTracingScope<CorrelationContext>>();
             Services.TryAddSingleton<ITracingScopeSetter<CorrelationContext>>(p => p.GetRequiredService<AsyncLocalTracingScope<CorrelationContext>>());

@@ -9,5 +9,7 @@
         /// This Scopes Tracing Context.
         /// </summary>
         TTracingContext Context { get; }
+
+        bool ReceivedId { get; }
     }
 }

@@ -143,7 +143,7 @@ namespace TraceLink.AspNetCore.Tests
 
             serviceProvider
                 .GetRequiredService<IAspNetTracingScope<TraceContext>>()
-                .TrySetId(true);
+                .SetId(true);
 
             serviceProvider
                 .GetRequiredService<IIdForwarder<TraceContext>>()

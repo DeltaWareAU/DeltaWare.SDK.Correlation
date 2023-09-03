@@ -8,7 +8,7 @@ using TraceLink.AspNetCore.Extensions;
 
 namespace TraceLink.AspNetCore.Context.Scopes
 {
-    internal sealed class AspNetTracingTraceScope : AspNetTracingScope<TraceContext>
+    internal sealed class AspNetTraceScope : AspNetTracingScope<TraceContext>
     {
         public override TraceContext Context { get; }
 
@@ -16,7 +16,7 @@ namespace TraceLink.AspNetCore.Context.Scopes
 
         public override string Id => Context?.Id ?? string.Empty;
 
-        public AspNetTracingTraceScope(ITracingScopeSetter<TraceContext> tracingScopeSetter, ITracingOptions<TraceContext> options, IHttpContextAccessor httpContextAccessor, ILogger<TraceContext>? logger = null) : base(tracingScopeSetter, options, httpContextAccessor, logger)
+        public AspNetTraceScope(ITracingScopeSetter<TraceContext> tracingScopeSetter, ITracingOptions<TraceContext> options, IHttpContextAccessor httpContextAccessor, ILogger<TraceContext>? logger = null) : base(tracingScopeSetter, options, httpContextAccessor, logger)
         {
             if (!TryGetId(out string? traceId))
             {
@@ -35,7 +35,7 @@ namespace TraceLink.AspNetCore.Context.Scopes
 
             if (options.AttachToResponse)
             {
-                TrySetId();
+                SetId();
             }
         }
 
@@ -73,16 +73,6 @@ namespace TraceLink.AspNetCore.Context.Scopes
             return true;
         }
 
-        protected override void OnMultipleIdsFounds(string[] foundIds)
-        {
-            Logger?.LogWarning("Multiple TraceIds found ({TraceIds}), only the first will be used.", string.Join(',', foundIds));
-        }
-
-        protected override void OnIdAttached(string id)
-        {
-            Logger?.LogDebug("Trace ID {TraceId} has been attached to the Response Headers", id);
-        }
-
         protected override bool CanSkipValidation(HttpContext context)
         {
             if (!context.Features.HasFeature<TraceIdHeaderNotRequiredAttribute>())
@@ -94,6 +84,16 @@ namespace TraceLink.AspNetCore.Context.Scopes
 
             return true;
 
+        }
+
+        protected override void OnMultipleIdsFounds(string[] foundIds)
+        {
+            Logger?.LogWarning("Multiple TraceIds found ({TraceIds}), only the first will be used.", string.Join(',', foundIds));
+        }
+
+        protected override void OnIdAttached(string id)
+        {
+            Logger?.LogDebug("Trace ID {TraceId} has been attached to the Response Headers", id);
         }
 
         protected override void OnValidationPassed()

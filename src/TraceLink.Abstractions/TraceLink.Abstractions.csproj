@@ -3,7 +3,7 @@
   <PropertyGroup>
       <TargetFrameworks>netstandard2.1;net5.0;net6.0;net7.0</TargetFrameworks>
       <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-      <Version>7.0.0.2</Version>
+      <Version>7.0.0.3</Version>
 	  <!--<Nullable>enable</Nullable>-->
       <Author>Bradley Clarke</Author>
       <Company>DeltaWare</Company>
