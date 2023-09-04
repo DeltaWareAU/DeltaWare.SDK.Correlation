@@ -13,9 +13,6 @@ namespace TraceLink.Abstractions.Context.Accessors
         /// </summary>
         TTracingContext Context { get; }
 
-        ///// <summary>
-        ///// The Tracing Context Scope.
-        ///// </summary>
-        //ITracingScope<TTracingContext> Scope { get; }
+        bool ReceivedId { get; }
     }
 }

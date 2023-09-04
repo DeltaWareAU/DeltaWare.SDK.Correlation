@@ -10,10 +10,9 @@ namespace TraceLink.NServiceBus.Tests.Mocking
         private ITracingScope<TTracingContext>? _internalScope = null;
 
         /// <inheritdoc/>
-        public ITracingScope Scope => _internalScope;
+        public TTracingContext Context => _internalScope!.Context;
 
-        /// <inheritdoc/>
-        public TTracingContext Context => _internalScope.Context;
+        public bool ReceivedId => _internalScope?.ReceivedId ?? false;
 
         public void SetScope(ITracingScope<TTracingContext> tracingScope)
             => _internalScope = tracingScope;
