@@ -32,21 +32,21 @@ namespace TraceLink.AspNetCore.Middleware
 
             tracingScope.SetId();
 
-            if (_logger == null || !_options.AttachToLoggingScope)
+            if (_logger == null || !_options.AttachToLoggingScope || !tracingScope.ReceivedId)
             {
                 await _next(context);
-            }
-            else
-            {
-                Dictionary<string, string> state = new Dictionary<string, string>
-                {
-                    [_options.LoggingScopeKey] = tracingScope.Id
-                };
 
-                using (_logger.BeginScope(state))
-                {
-                    await _next(context);
-                }
+                return;
+            }
+
+            Dictionary<string, string> state = new Dictionary<string, string>
+            {
+                [_options.LoggingScopeKey] = tracingScope.Id!
+            };
+
+            using (_logger.BeginScope(state))
+            {
+                await _next(context);
             }
         }
     }

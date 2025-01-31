@@ -31,7 +31,7 @@ namespace TraceLink.NServiceBus.Behaviors
                 throw new ArgumentException($"{_options.Key} was not Attached to the Headers of the Incoming Message.");
             }
 
-            if (_logger == null || !_options.AttachToLoggingScope)
+            if (_logger == null || !_options.AttachToLoggingScope || !tracingScope.ReceivedId)
             {
                 await next();
 
