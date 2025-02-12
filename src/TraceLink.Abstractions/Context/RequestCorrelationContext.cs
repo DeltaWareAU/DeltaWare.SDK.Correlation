@@ -2,9 +2,9 @@
 
 namespace TraceLink.Abstractions.Context
 {
-    public sealed class RequestTransactionContext : ITracingContext
+    public sealed class RequestCorrelationContext : ITracingContext
     {
-        public RequestTransactionContext(Guid id)
+        public RequestCorrelationContext(Guid id)
         {
             Id = id;
         }

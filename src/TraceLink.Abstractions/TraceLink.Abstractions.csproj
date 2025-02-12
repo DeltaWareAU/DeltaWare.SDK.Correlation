@@ -23,8 +23,9 @@
 	  <PackageIcon>nuget_logo.png</PackageIcon>
 	  <PackageReleaseNotes>* Added Support for NetStandard2.1</PackageReleaseNotes>
 	  <Copyright>Copyright (c) 2022 Bradley Clarke</Copyright>
+	  <Nullable>enable</Nullable>
   </PropertyGroup>
-
+	
     <ItemGroup>
         <None Include="..\..\nuget_logo.png" pack="true" PackagePath="." />
     </ItemGroup>

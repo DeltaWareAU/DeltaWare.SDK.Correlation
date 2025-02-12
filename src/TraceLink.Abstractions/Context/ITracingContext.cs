@@ -2,7 +2,7 @@
 
 namespace TraceLink.Abstractions.Context
 {
-    public interface IContext
+    public interface ITracingContext
     {
         Guid Id { get; }
     }
