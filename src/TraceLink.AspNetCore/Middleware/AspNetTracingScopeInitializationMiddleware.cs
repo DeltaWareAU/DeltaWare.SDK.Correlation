@@ -66,7 +66,6 @@ namespace TraceLink.AspNetCore.Middleware
             httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
             httpContext.Response.ContentType = "application/json";
 
-            // Craft a more detailed JSON error response
             var errorResponse = new
             {
                 error = new
@@ -81,7 +80,6 @@ namespace TraceLink.AspNetCore.Middleware
 
             await httpContext.Response.WriteAsync(responseContent, cancellationToken);
 
-            // Enhanced logging with structured details
             _logger?.LogWarning("Responding with 400 (Bad Request) as the incoming HTTP request did not have the required '{HeaderKey}' header.", _options.Key);
         }
     }
