@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using TraceLink.Abstractions.Context;
-using TraceLink.AspNetCore.Handler;
+using TraceLink.HttpClientBuilder.Handler;
 
-namespace TraceLink.AspNetCore
+namespace TraceLink.HttpClientBuilder
 {
     public static class TraceLinkAspNetHttpClientBuilder
     {

@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TraceLink.NServiceBus.Tests
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TraceLink.Abstractions", "src\TraceLink.Abstractions\TraceLink.Abstractions.csproj", "{A5074AA7-9EB6-433E-8DB7-EDF3F125DF53}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TraceLink.HttpClientBuilder", "src\TraceLink.HttpClientBuilder\TraceLink.HttpClientBuilder.csproj", "{6F5455D8-9247-475F-BA98-40299AA93986}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{A5074AA7-9EB6-433E-8DB7-EDF3F125DF53}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A5074AA7-9EB6-433E-8DB7-EDF3F125DF53}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A5074AA7-9EB6-433E-8DB7-EDF3F125DF53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F5455D8-9247-475F-BA98-40299AA93986}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F5455D8-9247-475F-BA98-40299AA93986}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F5455D8-9247-475F-BA98-40299AA93986}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F5455D8-9247-475F-BA98-40299AA93986}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

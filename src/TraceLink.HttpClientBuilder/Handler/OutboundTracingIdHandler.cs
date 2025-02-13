@@ -6,7 +6,7 @@ using TraceLink.Abstractions.Context;
 using TraceLink.Abstractions.Options;
 using TraceLink.Abstractions.Outgoing;
 
-namespace TraceLink.AspNetCore.Handler
+namespace TraceLink.HttpClientBuilder.Handler
 {
     internal sealed class OutboundTracingIdHandler<TTracingContext> : DelegatingHandler where TTracingContext : struct, ITracingContext
     {

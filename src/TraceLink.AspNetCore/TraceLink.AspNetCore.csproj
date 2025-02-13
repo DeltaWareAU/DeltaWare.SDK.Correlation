@@ -26,12 +26,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Remove="Extensions\**" />
-		<EmbeddedResource Remove="Extensions\**" />
-		<None Remove="Extensions\**" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<None Include="..\..\nuget_logo.png" pack="true" PackagePath="." />
 	</ItemGroup>
 
@@ -45,7 +39,6 @@
 
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
-		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
