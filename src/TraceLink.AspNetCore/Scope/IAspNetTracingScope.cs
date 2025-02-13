@@ -1,14 +1,12 @@
-﻿using System.Threading;
-using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
 using TraceLink.Abstractions.Context;
 using TraceLink.Abstractions.Scope;
 
 namespace TraceLink.AspNetCore.Scope
 {
-    internal interface IAspNetTracingScope<out TContext> where TContext : ITracingContext
+    public interface IAspNetTracingScope<out TTracingContext> : ITracingScope<TTracingContext> where TTracingContext : struct, ITracingContext
     {
-        Task<bool> ValidateHeaderAsync(HttpContext httpContext, CancellationToken cancellationToken = default);
+        bool TryInitializeTracingId(HttpContext httpContext);
 
         void InitializeScope();
     }

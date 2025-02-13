@@ -3,22 +3,22 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using System;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using TraceLink.Abstractions.Context;
 using TraceLink.Abstractions.Options;
 using TraceLink.AspNetCore.Enum;
 
 namespace TraceLink.AspNetCore.Scope
 {
-    internal abstract class AspNetTracingScope<TContext> : IAspNetTracingScope<TContext> where TContext : ITracingContext
+    public abstract class AspNetTracingScope<TTracingContext> : IAspNetTracingScope<TTracingContext> where TTracingContext : struct, ITracingContext
     {
-        private readonly ITracingOptions<TContext> _options;
+        private readonly ITracingOptions<TTracingContext> _options;
         private readonly ILogger? _logger;
 
-        private Guid? _receivedTracingId;
+        private Guid? _headerTracingId;
 
-        protected AspNetTracingScope(ITracingOptions<TContext> options, ILogger? logger = null)
+        public TTracingContext Context { get; private set; }
+
+        protected AspNetTracingScope(ITracingOptions<TTracingContext> options, ILogger? logger = null)
         {
             _options = options;
             _logger = logger;
@@ -26,66 +26,68 @@ namespace TraceLink.AspNetCore.Scope
 
         public void InitializeScope()
         {
-            if (!_receivedTracingId.HasValue)
+            if (!_headerTracingId.HasValue)
             {
                 return;
             }
 
-            InitializeScope(_receivedTracingId.Value);
+            Context = InitializeContext(_headerTracingId.Value);
         }
 
-        protected abstract void InitializeScope(Guid tracingId);
+        protected abstract TTracingContext InitializeContext(Guid tracingId);
 
-        public async Task<bool> ValidateHeaderAsync(HttpContext httpContext, CancellationToken cancellationToken = default)
+        protected abstract HeaderValidationRequirements GetHeaderValidationRequirements(HttpContext httpContext);
+
+        protected virtual Guid GenerateTracingId() => Guid.NewGuid();
+
+        public bool TryInitializeTracingId(HttpContext httpContext)
         {
-            if (ValidateHeader(httpContext))
+            var validationRequirements = GetHeaderValidationRequirements(httpContext);
+
+            if (validationRequirements == HeaderValidationRequirements.Default && _options.IsRequired)
+            {
+                validationRequirements = HeaderValidationRequirements.Required;
+            }
+
+            bool isHeaderRequired = validationRequirements != HeaderValidationRequirements.Required;
+
+            if (TryGetTracingId(httpContext, isHeaderRequired))
             {
                 return true;
             }
 
-            await OnValidationFailedAsync(httpContext, cancellationToken);
-
-            return false;
-        }
-
-        private async Task OnValidationFailedAsync(HttpContext httpContext, CancellationToken cancellationToken)
-        {
-            var validationRequirements = GetHeaderValidationRequirements(httpContext);
-
-            if (validationRequirements == HeaderValidationRequirements.Optional)
+            if (isHeaderRequired)
             {
-                return;
+                return false;
             }
 
-            if (validationRequirements != HeaderValidationRequirements.Required && !_options.IsRequired)
-            {
-                return;
-            }
+            _logger?.LogDebug("Generating TraceId as it was not present on the HttpRequest Headers.");
 
-            httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+            _headerTracingId = GenerateTracingId();
 
-            await httpContext.Response.WriteAsync($"The Request Headers must contain the \"{_options.Key}\" Key.", cancellationToken);
+            return true;
+
         }
 
-        private bool ValidateHeader(HttpContext httpContext)
+        private bool TryGetTracingId(HttpContext httpContext, bool logWarning)
         {
             if (!httpContext.Request.Headers.TryGetValue(_options.Key, out var headerValues))
             {
-                _logger?.LogWarning("Header Validation Failed - The header {HeaderKey} was no present.", _options.Key);
+                LogWarningIfRequired(logWarning, "was not present.");
 
                 return false;
             }
 
             if (StringValues.IsNullOrEmpty(headerValues))
             {
-                _logger?.LogWarning("Header Validation Failed - The header {HeaderKey} was present but wasn't assigned a value.", _options.Key);
+                LogWarningIfRequired(logWarning, "was present but empty.");
 
                 return false;
             }
 
             if (headerValues.Count > 1)
             {
-                _logger?.LogWarning("Header Validation Failed - The header {HeaderKey} had more than one value assigned.", _options.Key);
+                LogWarningIfRequired(logWarning, "had more than one value.");
 
                 return false;
             }
@@ -94,18 +96,26 @@ namespace TraceLink.AspNetCore.Scope
 
             if (!Guid.TryParse(headerValue, out var tracingId))
             {
-                _logger?.LogWarning("Header Validation Failed - The header {HeaderKey} could not be parsed.", _options.Key);
+                LogWarningIfRequired(logWarning, "could not be parsed as a GUID.");
 
                 return false;
             }
 
-            _receivedTracingId = tracingId;
+            _headerTracingId = tracingId;
 
             _logger?.LogDebug("Header Validation Successful.");
 
             return true;
         }
 
-        protected abstract HeaderValidationRequirements GetHeaderValidationRequirements(HttpContext httpContext);
+        private void LogWarningIfRequired(bool required, string message)
+        {
+            if (!required)
+            {
+                return;
+            }
+
+            _logger?.LogWarning("Tracing Header Validation Failed - The Header {HeaderKey} {Message}", _options.Key, message);
+        }
     }
 }

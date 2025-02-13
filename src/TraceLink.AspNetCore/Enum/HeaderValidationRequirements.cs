@@ -1,6 +1,6 @@
 ﻿namespace TraceLink.AspNetCore.Enum
 {
-    internal enum HeaderValidationRequirements
+    public enum HeaderValidationRequirements
     {
         Default,
         Required,

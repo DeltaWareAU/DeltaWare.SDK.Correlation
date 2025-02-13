@@ -2,8 +2,8 @@
 
 namespace TraceLink.Abstractions.Scope
 {
-    public interface ITracingScopeSetter<in TContext> where TContext : ITracingContext
+    public interface ITracingScopeSetter<in TTracingContext> where TTracingContext : struct, ITracingContext
     {
-        void SetScope<TContextScope>(TContextScope scope) where TContextScope : ITracingScope<TContext>;
+        void SetTracingScope<TTracingScope>(TTracingScope tracingScope) where TTracingScope : ITracingScope<TTracingContext>;
     }
 }

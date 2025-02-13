@@ -2,7 +2,7 @@
 
 namespace TraceLink.Abstractions.Options
 {
-    public interface ITracingOptions<TContext> where TContext : ITracingContext
+    public interface ITracingOptions<TTracingContext> where TTracingContext : struct, ITracingContext
     {
         /// <summary>
         /// The Key used to access the ID.

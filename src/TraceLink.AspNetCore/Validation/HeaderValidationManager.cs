@@ -5,9 +5,9 @@ using System.Collections.Concurrent;
 using System.Reflection;
 using TraceLink.AspNetCore.Enum;
 
-namespace TraceLink.AspNetCore
+namespace TraceLink.AspNetCore.Validation
 {
-    internal sealed class HeaderValidationManager
+    internal sealed class HeaderValidationManager : IHeaderValidationManager
     {
         private readonly ConcurrentDictionary<string, HeaderValidationRequirements> _requirementsCache = new();
 
