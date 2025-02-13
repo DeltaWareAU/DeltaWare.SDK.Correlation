@@ -1,6 +1,6 @@
-﻿using System;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using NServiceBus.Pipeline;
+using System;
 using TraceLink.Abstractions.Context;
 using TraceLink.Abstractions.Context.Factory;
 using TraceLink.Abstractions.Options;

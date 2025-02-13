@@ -60,7 +60,7 @@ namespace TraceLink.AspNetCore.Scope
             return true;
 
         }
-        
+
         private bool TryGetTracingId(HttpContext httpContext, bool logWarning, out Guid tracingId)
         {
             tracingId = Guid.Empty;
