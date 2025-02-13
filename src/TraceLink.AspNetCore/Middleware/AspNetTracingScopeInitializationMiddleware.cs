@@ -17,7 +17,7 @@ namespace TraceLink.AspNetCore.Middleware
         private readonly ITracingOptions<TTracingContext> _options;
         private readonly ILogger? _logger;
 
-        public AspNetTracingScopeInitializationMiddleware(RequestDelegate next, ITracingOptions<TTracingContext> options, ILogger<AspNetTracingScopeInitializationMiddleware<TTracingContext>>? logger = null)
+        public AspNetTracingScopeInitializationMiddleware(RequestDelegate next, ITracingOptions<TTracingContext> options, ILogger? logger = null)
         {
             _next = next;
             _options = options;
@@ -26,14 +26,12 @@ namespace TraceLink.AspNetCore.Middleware
 
         public async Task Invoke(HttpContext httpContext, IAspNetTracingScope<TTracingContext> tracingScope, ITracingScopeSetter<TTracingContext> scopeSetter, ITracingScopeAccessor<TTracingContext> scopeAccessor, CancellationToken cancellationToken = default)
         {
-            if (!tracingScope.TryInitializeTracingId(httpContext))
+            if (!tracingScope.TryInitializeScope(httpContext))
             {
                 await RespondToMissingTracingAsync(httpContext, cancellationToken);
 
                 return;
             }
-
-            tracingScope.InitializeScope();
 
             scopeSetter.SetTracingScope(tracingScope);
 
@@ -56,7 +54,7 @@ namespace TraceLink.AspNetCore.Middleware
         }
 
         private IReadOnlyDictionary<string, string> GetLoggingState(ITracingScopeAccessor<TTracingContext> scopeAccessor)
-            => new Dictionary<string, string>()
+            => new Dictionary<string, string>
             {
                 [_options.LoggingScopeKey] = scopeAccessor.Scope.Context!.Id.ToString()
             };

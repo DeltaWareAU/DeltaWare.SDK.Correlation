@@ -2,12 +2,12 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using TraceLink.Abstractions.Context;
 using TraceLink.Abstractions.Options;
-using TraceLink.Abstractions.Outbound;
+using TraceLink.Abstractions.Outgoing;
 using TraceLink.Abstractions.Scope;
 
 namespace TraceLink.Abstractions.Configuration
 {
-    public class TracingConfiguration<TTracingContext> : ITracingConfiguration<TTracingContext> where TTracingContext : struct, ITracingContext
+    public class TraceLinkConfiguration<TTracingContext> : ITraceLinkConfiguration<TTracingContext> where TTracingContext : struct, ITracingContext
     {
         public string Key { get; set; }
         public bool AttachToResponse { get; set; }
@@ -16,19 +16,19 @@ namespace TraceLink.Abstractions.Configuration
         public string LoggingScopeKey { get; set; }
         public IServiceCollection Services { get; }
 
-        public TracingConfiguration(IServiceCollection services)
+        public TraceLinkConfiguration(IServiceCollection services)
         {
             Services = services;
         }
 
-        public virtual void ConfigureTracing()
+        public virtual void ConfigureTraceLink()
         {
             Services.AddScoped(_ => BuildTracingOptions());
-            Services.AddScoped<TracingScopeContext<TTracingContext>>();
-            Services.AddScoped<ITracingScopeAccessor<TTracingContext>>(p => p.GetRequiredService<TracingScopeContext<TTracingContext>>());
-            Services.AddScoped<ITracingScopeSetter<TTracingContext>>(p => p.GetRequiredService<TracingScopeContext<TTracingContext>>());
+            Services.TryAddScoped<TracingScopeContext<TTracingContext>>();
+            Services.TryAddScoped<ITracingScopeAccessor<TTracingContext>>(p => p.GetRequiredService<TracingScopeContext<TTracingContext>>());
+            Services.TryAddScoped<ITracingScopeSetter<TTracingContext>>(p => p.GetRequiredService<TracingScopeContext<TTracingContext>>());
 
-            Services.TryAddScoped<IOutboundTracingIdProvider<TTracingContext>, OutboundTracingIdProvider<TTracingContext>>();
+            Services.TryAddScoped<IOutgoingTracingIdProvider<TTracingContext>, OutgoingTracingIdProvider<TTracingContext>>();
         }
 
         private ITracingOptions<TTracingContext> BuildTracingOptions()

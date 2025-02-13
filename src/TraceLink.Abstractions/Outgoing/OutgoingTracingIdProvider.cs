@@ -2,13 +2,13 @@
 using TraceLink.Abstractions.Context;
 using TraceLink.Abstractions.Scope;
 
-namespace TraceLink.Abstractions.Outbound
+namespace TraceLink.Abstractions.Outgoing
 {
-    internal sealed class OutboundTracingIdProvider<TTracingContext> : IOutboundTracingIdProvider<TTracingContext> where TTracingContext : struct, ITracingContext
+    internal sealed class OutgoingTracingIdProvider<TTracingContext> : IOutgoingTracingIdProvider<TTracingContext> where TTracingContext : struct, ITracingContext
     {
         private readonly ITracingScopeAccessor<TTracingContext> _tracingScopeAccessor;
 
-        public OutboundTracingIdProvider(ITracingScopeAccessor<TTracingContext> tracingScopeAccessor)
+        public OutgoingTracingIdProvider(ITracingScopeAccessor<TTracingContext> tracingScopeAccessor)
         {
             _tracingScopeAccessor = tracingScopeAccessor;
         }

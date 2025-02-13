@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using System;
 using System.Collections.Concurrent;
 using System.Reflection;
+using TraceLink.Abstractions.Context;
+using TraceLink.AspNetCore.Attributes;
 using TraceLink.AspNetCore.Enum;
 
 namespace TraceLink.AspNetCore.Validation
@@ -11,7 +13,7 @@ namespace TraceLink.AspNetCore.Validation
     {
         private readonly ConcurrentDictionary<string, HeaderValidationRequirements> _requirementsCache = new();
 
-        public HeaderValidationRequirements GetHeaderValidationRequirements<TRequired, TNotRequired>(HttpContext httpContext) where TRequired : Attribute where TNotRequired : Attribute
+        public HeaderValidationRequirements GetHeaderValidationRequirements<TTracingContext>(HttpContext httpContext) where TTracingContext : struct, ITracingContext
         {
             var endpoint = httpContext.GetEndpoint();
 
@@ -34,7 +36,7 @@ namespace TraceLink.AspNetCore.Validation
                 return requirements;
             }
 
-            requirements = DetermineHeaderValidationRequirements<TRequired, TNotRequired>(actionDescriptor);
+            requirements = DetermineHeaderValidationRequirements<TracingIdRequired<TTracingContext>, TracingIdNotRequired<TTracingContext>>(actionDescriptor);
 
             _requirementsCache.TryAdd(cacheKey, requirements);
 

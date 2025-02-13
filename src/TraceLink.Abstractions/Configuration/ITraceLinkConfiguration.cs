@@ -3,7 +3,7 @@ using TraceLink.Abstractions.Context;
 
 namespace TraceLink.Abstractions.Configuration
 {
-    public interface ITracingConfiguration<TTracingContext> where TTracingContext : struct, ITracingContext
+    public interface ITraceLinkConfiguration<TTracingContext> where TTracingContext : struct, ITracingContext
     {
         string Key { get; set; }
         bool AttachToResponse { get; set; }
